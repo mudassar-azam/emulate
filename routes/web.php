@@ -8,12 +8,12 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::get('/', function () {
-    return view('front.index');
-});
-Route::get('/product', function () {
-    return view('product');
+    return view('seller.index');
 });
 
+Route::get('/buyer', function () {
+    return view('buyer.index');
+});
 
 Auth::routes();
 

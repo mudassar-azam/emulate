@@ -27,7 +27,7 @@
 @include('partial.header')
 
 @yield('content')
-
+@stack('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     var ctx = document.getElementById('radar_chart').getContext('2d');
