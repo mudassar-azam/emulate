@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
- @include('partial.header')
+
 <main class="main">
     <div class="d-flex" style="padding-top:1rem;">
         <div class="back-btn">
