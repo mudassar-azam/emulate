@@ -8,7 +8,7 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('front.index');
 });
 
 Auth::routes();
