@@ -10,6 +10,10 @@ Route::group(['prefix' => 'admin'], function () {
 Route::get('/', function () {
     return view('front.index');
 });
+Route::get('/product', function () {
+    return view('product');
+});
+
 
 Auth::routes();
 
