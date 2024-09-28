@@ -1,20 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Seller\SellerFrontController;
+use App\Http\Controllers\Buyer\BuyerFrontController;
+
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(['prefix' => 'admin'], function () {
 
     require base_path('routes/admin.php');
 });
 
-Route::get('/', function () {
-    return view('seller.index');
-});
+// seller 
 
-Route::get('/buyer', function () {
-    return view('buyer.index');
-});
+Route::get('/', [SellerFrontController::class, 'index'])->name('seller.front');
 
-Auth::routes();
+// buyer 
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/buyer', [BuyerFrontController::class, 'index'])->name('buyer.front');
