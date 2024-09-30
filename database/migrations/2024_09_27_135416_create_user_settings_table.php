@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('youtube_link')->nullable();
             $table->string('instagram_link')->nullable();
             $table->string('twitter_link')->nullable();
+            $table->string('profile')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

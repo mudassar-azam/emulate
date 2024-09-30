@@ -6,27 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('sale_price', 8, 2);
-            $table->decimal('rental_price', 8, 2)->nullable();
-            $table->string('size');
-            $table->string('item_type');
+            $table->string('post');
+            $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('category_id');
             $table->timestamps();
     
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('posts');
     }
 };

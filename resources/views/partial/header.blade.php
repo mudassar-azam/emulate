@@ -7,18 +7,18 @@
                 <path d="M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7">
                     <animate dur="0.2s" attributeName="d"
                              values="M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7;M3,3L5,5L7,3M5,5L5,5M3,7L5,5L7,7" fill="freeze"
-                             begin="start.begin" />
+                             begin="start.begin"/>
                     <animate dur="0.2s" attributeName="d"
                              values="M3,3L5,5L7,3M5,5L5,5M3,7L5,5L7,7;M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7" fill="freeze"
-                             begin="reverse.begin" />
+                             begin="reverse.begin"/>
                 </path>
                 <rect width="10" height="10" stroke="none">
-                    <animate dur="2s" id="reverse" attributeName="width" begin="click" />
+                    <animate dur="2s" id="reverse" attributeName="width" begin="click"/>
                 </rect>
                 <rect width="10" height="10" stroke="none">
                     <animate dur="0.001s" id="start" attributeName="width" values="10;0" fill="freeze"
-                             begin="click" />
-                    <animate dur="0.001s" attributeName="width" values="0;10" fill="freeze" begin="reverse.begin" />
+                             begin="click"/>
+                    <animate dur="0.001s" attributeName="width" values="0;10" fill="freeze" begin="reverse.begin"/>
                 </rect>
             </svg>
         </div>
@@ -36,7 +36,17 @@
     <div class="header-buttons">
         <button class="cart-btn"><i class="fa-regular fa-heart"></i></button>
         <button class="cart-btn" id="cartButton"><i class="fa-solid fa-bag-shopping"></i></button>
-        <button class="sign-in-btn rounded-btn" onclick="openPopup('signin')">Sign In</button>
+
+              @if(Auth::check())
+                <!-- Show Logout Button if authenticated -->
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="sign-in-btn rounded-btn">Logout</button>
+                    </form>
+            @else
+                <!-- Show Sign In Button if not authenticated -->
+                    <button class="sign-in-btn rounded-btn" onclick="openPopup('signin')">Sign In</button>
+            @endif
         <!-- <div class="profile-container-unique">
             <img src="https://via.placeholder.com/50" alt="Profile Image" class="profile-image-unique"
                 onclick="toggleDropdownUnique()">
@@ -68,11 +78,22 @@
             </div>
         </div>
         <div class="popup-form-container">
-            <form class="popup-form">
-                <label>Email</label>
-                <input type="email" required />
-                <label>Password</label>
-                <input type="password" required />
+            <form class="popup-form"  method="POST" action="{{ route('login') }}">
+                @csrf
+                <label for="email">{{ __('Email Address') }}</label>
+                <input type="email" id="email" class="@error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                    @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                <label for="password">{{ __('Password') }}</label>
+                <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                    @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
 
                 <button type="submit">SIGN IN</button>
             </form>
@@ -88,13 +109,13 @@
                     <title>Google Logo</title>
                     <clipPath id="g">
                         <path
-                            d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z" />
+                            d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
                     </clipPath>
                     <g class="colors" clip-path="url(#g)">
-                        <path fill="#FBBC05" d="M0 37V11l17 13z" />
-                        <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z" />
-                        <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z" />
-                        <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z" />
+                        <path fill="#FBBC05" d="M0 37V11l17 13z"/>
+                        <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+                        <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+                        <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
                     </g>
                 </svg>
                 Continue with Google
@@ -102,6 +123,69 @@
         </div>
     </div>
 </div>
+
+<!-- Sign Up Popup -->
+<div id="sellerSignup-popup" class="popup">
+    <div class="popup-content">
+        <div class="popup-title">
+            <h3>Seller Sign Up</h3>
+        </div>
+        <div class="popup-form-container">
+            <form class="popup-form" method="POST" action="{{ route('register') }}">
+                @csrf
+                <input type="hidden" name="role" value="seller">
+                <label for="email">{{ __('Email Address') }}</label>
+                <input   type="email" id="email" class="@error('email') is-invalid @enderror" name="email"
+                         value="{{ $email ?? old('email') }}" required autocomplete="email">
+                @error('email')
+                <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+
+                <label for="password">{{ __('Password') }}</label>
+                <input type="password" id="password" class="@error('password') is-invalid @enderror" name="password"
+                       required autocomplete="current-password">
+                @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+
+
+                <label for="name">Username</label>
+                <input type="text" id="name" class="@error('name') is-invalid @enderror" name="name"
+                       value="{{ old('name') }}" required autocomplete="name" autofocus>
+                @error('name')
+                <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                @enderror
+                <button type="submit">SIGN UP</button>
+            </form>
+
+            <div class="or-divider">or</div>
+
+            <div class="google-btn">
+                <svg viewBox="0 0 48 48">
+                    <title>Google Logo2</title>
+                    <clipPath id="g2">
+                        <path
+                            d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
+                    </clipPath>
+                    <g class="colors" clip-path="url(#g2)">
+                        <path fill="#FBBC05" d="M0 37V11l17 13z"/>
+                        <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+                        <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+                        <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
+                    </g>
+                </svg>
+                Continue with Google
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Sign Up Popup -->
 <div id="signup-popup" class="popup">
@@ -115,13 +199,35 @@
             </div>
         </div>
         <div class="popup-form-container">
-            <form class="popup-form">
-                <label>Email</label>
-                <input type="email" required />
-                <label>Password</label>
-                <input type="password" required />
-                <label>Username</label>
-                <input type="text" required />
+            <form class="popup-form" method="POST" action="{{ route('register') }}">
+                @csrf
+                <label for="email">{{ __('Email Address') }}</label>
+                <input type="email" id="email" class="@error('email') is-invalid @enderror" name="email"
+                       value="{{ old('email') }}" required autocomplete="email">
+                @error('email')
+                <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+
+                <label for="password">{{ __('Password') }}</label>
+                <input type="password" id="password" class="@error('password') is-invalid @enderror" name="password"
+                       required autocomplete="current-password">
+                @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+
+
+                <label for="name">Username</label>
+                <input type="text" id="name" class="@error('name') is-invalid @enderror" name="name"
+                       value="{{ old('name') }}" required autocomplete="name" autofocus>
+                @error('name')
+                <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                @enderror
                 <button type="submit">SIGN UP</button>
             </form>
 
@@ -132,13 +238,13 @@
                     <title>Google Logo2</title>
                     <clipPath id="g2">
                         <path
-                            d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z" />
+                            d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
                     </clipPath>
                     <g class="colors" clip-path="url(#g2)">
-                        <path fill="#FBBC05" d="M0 37V11l17 13z" />
-                        <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z" />
-                        <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z" />
-                        <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z" />
+                        <path fill="#FBBC05" d="M0 37V11l17 13z"/>
+                        <path fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+                        <path fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+                        <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
                     </g>
                 </svg>
                 Continue with Google
@@ -172,7 +278,7 @@
                 <div class="pricing">
                     <p>Bubble Cocktail Minidress</p>
                     <p>Retail $498.00</p>
-                    <p> <b>Rent for $65.00</b> </p>
+                    <p><b>Rent for $65.00</b></p>
                 </div>
                 <p>Size: M</p>
             </div>
@@ -299,236 +405,17 @@
     </div>
 </div>
 
-<!-- Buy popup -->
-<div id="setting-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-             style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Setting</h2>
-            <!-- <a href="#">Need help?</a> -->
-        </div>
-        <div class="sub-container">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Name">
 
-            <label for="introduce">Introduce</label>
-            <textarea id="introduce" name="introduce" rows="3">
-                </textarea>
-
-            <label for="social">Social Links</label>
-            <input type="text" id="social" name="link" placeholder="https://www.instagram.com/">
-            <button class="add-link">ADD LINK</button>
-            <button class="apply-btn">SAVE</button>
-        </div>
-    </div>
-</div>
-
-<!-- Buy popup -->
-<div id="addnewitem-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-             style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Add New Item</h2>
-            <!-- <a href="#">Need help?</a> -->
-        </div>
-        <div class="sub-container">
-            <form action="">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Name">
-
-                <label for="file">Photo</label>
-                <div class="file-upload-container">
-                        <span for="file-input" class="file-upload-label">
-                            <p>Drop file to upload or Click to browse</p>
-                            <button class="import-btn">Import</button>
-                        </span>
-                    <input type="file" id="file-input" class="file-input" multiple />
-                </div>
-                <div id="file-list"></div>
-
-                <label for="price">Price</label>
-                <input type="number" id="price" name="price" placeholder="Name">
-
-                <label for="size">Fre Backup Size</label>
-                <select id="size" name="size">
-                    <option value="IT44">IT 44 / US 8</option>
-                    <option value="IT46">IT 46 / US 9</option>
-                    <option value="IT48">IT 48 / US 10</option>
-                </select>
-
-                <button type="submit" class="apply-btn">APPLY</button>
-            </form>
-
-            <script>
-                const fileInput = document.getElementById('file-input');
-                const fileUploadContainer = document.querySelector('.file-upload-container');
-                const importBtn = document.querySelector('.import-btn');
-                const fileList = document.getElementById('file-list');
-
-                // Handle drag and drop events
-                fileUploadContainer.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                    fileUploadContainer.classList.add('dragging');
-                });
-
-                fileUploadContainer.addEventListener('dragleave', () => {
-                    fileUploadContainer.classList.remove('dragging');
-                });
-
-                fileUploadContainer.addEventListener('drop', (event) => {
-                    event.preventDefault();
-                    fileUploadContainer.classList.remove('dragging');
-                    handleFiles(event.dataTransfer.files);
-                });
-
-                // Handle click to browse
-                fileUploadContainer.addEventListener('click', () => {
-                    fileInput.click();
-                });
-
-                // Handle click to browse
-                importBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                });
-
-                // Handle file selection
-                fileInput.addEventListener('change', () => {
-                    handleFiles(fileInput.files);
-                });
-
-                // Function to handle files and display them
-                function handleFiles(files) {
-                    fileList.innerHTML = '';  // Clear the list before adding new files
-                    Array.from(files).forEach(file => {
-                        const fileItem = document.createElement('div');
-                        fileItem.classList.add('file-item');
-
-                        const fileName = document.createElement('span');
-                        fileName.textContent = file.name;
-
-                        const fileSize = document.createElement('span');
-                        fileSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
-
-                        fileItem.appendChild(fileName);
-                        fileItem.appendChild(fileSize);
-
-                        fileList.appendChild(fileItem);
-                    });
-                }
-
-
-            </script>
-
-        </div>
-    </div>
-</div>
-
-<!-- Buy popup -->
-<div id="addnewpost-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-             style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Add New Post</h2>
-            <!-- <a href="#">Need help?</a> -->
-        </div>
-        <div class="sub-container">
-            <form action="">
-                <label for="post">Post</label>
-                <textarea id="post" name="post" rows="3">
-                </textarea>
-
-                <label for="file">Photo</label>
-                <div class="file-upload-container second">
-                        <span for="file-input second" class="file-upload-label">
-                            <p>Drop file to upload or Click to browse</p>
-                            <button class="import-btn second">Import</button>
-                        </span>
-                    <input type="file" id="file-input" class="file-input second" multiple />
-                </div>
-                <div id="file-list second"></div>
-
-                <label for="size">Link Sell Item</label>
-                <select id="size" name="size">
-                    <option value="IT44">IT 44 / US 8</option>
-                    <option value="IT46">IT 46 / US 9</option>
-                    <option value="IT48">IT 48 / US 10</option>
-                </select>
-
-                <button type="submit" class="apply-btn" >POST</button>
-            </form>
-
-            <script>
-                const fileInput = document.querySelector('.file-input.second');
-                const fileUploadContainer = document.querySelector('.file-upload-container.second');
-                const importBtn = document.querySelector('.import-btn.second');
-                const fileList = document.querySelector('.file-list.second');
-
-                // Handle drag and drop events
-                fileUploadContainer.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                    fileUploadContainer.classList.add('dragging');
-                });
-
-                fileUploadContainer.addEventListener('dragleave', () => {
-                    fileUploadContainer.classList.remove('dragging');
-                });
-
-                fileUploadContainer.addEventListener('drop', (event) => {
-                    event.preventDefault();
-                    fileUploadContainer.classList.remove('dragging');
-                    handleFiles(event.dataTransfer.files);
-                });
-
-                // Handle click to browse
-                fileUploadContainer.addEventListener('click', () => {
-                    fileInput.click();
-                });
-
-                // Handle click to browse
-                importBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                });
-
-                // Handle file selection
-                fileInput.addEventListener('change', () => {
-                    handleFiles(fileInput.files);
-                });
-
-                // Function to handle files and display them
-                function handleFiles(files) {
-                    fileList.innerHTML = '';  // Clear the list before adding new files
-                    Array.from(files).forEach(file => {
-                        const fileItem = document.createElement('div');
-                        fileItem.classList.add('file-item');
-
-                        const fileName = document.createElement('span');
-                        fileName.textContent = file.name;
-
-                        const fileSize = document.createElement('span');
-                        fileSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
-
-                        fileItem.appendChild(fileName);
-                        fileItem.appendChild(fileSize);
-
-                        fileList.appendChild(fileItem);
-                    });
-                }
-
-
-            </script>
-
-        </div>
-    </div>
-</div>
 
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     // Load the Visualization API and the corechart and bar packages.
-    google.charts.load('current', { packages: ['corechart', 'bar'] });
+    google.charts.load('current', {packages: ['corechart', 'bar']});
 
     // Draw the Donut chart (Active now)
     google.charts.setOnLoadCallback(drawDonutChart);
+
     function drawDonutChart() {
         var data = google.visualization.arrayToDataTable([
             ['Status', 'Count'],
@@ -542,7 +429,7 @@
             legend: 'none',
             pieSliceText: 'none',
             pieStartAngle: 100,
-            chartArea: { width: '100%', height: '80%' },
+            chartArea: {width: '100%', height: '80%'},
             backgroundColor: '#f5f5f5',
         };
 
@@ -552,6 +439,7 @@
 
     // Draw the Line chart (Total Customers)
     google.charts.setOnLoadCallback(drawLineChart);
+
     function drawLineChart() {
         var data = google.visualization.arrayToDataTable([
             ['Month', 'Customers'],
@@ -569,9 +457,9 @@
             colors: ['#000000'],
             backgroundColor: '#f5f5f5',
             legend: 'none',
-            chartArea: { width: '80%', height: '80%' },
-            hAxis: { title: 'Month' },
-            vAxis: { title: 'Customers' }
+            chartArea: {width: '80%', height: '80%'},
+            hAxis: {title: 'Month'},
+            vAxis: {title: 'Customers'}
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
@@ -580,6 +468,7 @@
 
     // Draw the Stacked Bar chart (How do you acquire users?)
     google.charts.setOnLoadCallback(drawBarChart);
+
     function drawBarChart() {
         var data = google.visualization.arrayToDataTable([
             ['Source', 'Direct', 'Referral', 'Social'],
@@ -595,10 +484,26 @@
             backgroundColor: '#f5f5f5',
             colors: ['#000000', '#777777', '#d3d3d3'],
             legend: 'none',
-            chartArea: { width: '80%', height: '80%' }
+            chartArea: {width: '80%', height: '80%'}
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('bar_chart'));
         chart.draw(data, options);
     }
+</script>
+<script>
+
+    function checkURLParams() {
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email');
+        const modal = params.get('modal');
+
+        if (email && modal === 'true') {
+            // Optionally set the email value in the signup form if needed
+            document.getElementById('email').value = email; // Set the email input value
+            openPopup('sellerSignup'); // Open the signup popup
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', checkURLParams);
 </script>
