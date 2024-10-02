@@ -43,8 +43,7 @@ class ItemController extends Controller
 
         $data = $request->all();
 
-        // later we will use auth id of logged in user
-        $data['user_id'] = 1;
+        $data['user_id'] = Auth::user()->id;
 
         $item = Item::create($data);
 

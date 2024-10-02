@@ -35,8 +35,7 @@ class PostController extends Controller
 
         $data = $request->all();
 
-        // later we will use auth id of logged in user
-        $data['user_id'] = 3;
+        $data['user_id'] = Auth::user()->id;
 
         $post = Post::create($data);
 

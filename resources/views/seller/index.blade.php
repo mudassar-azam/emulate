@@ -17,49 +17,55 @@
 <main class="main">
     <div class="profile-section">
         <div class="profile-header">
-            <div class="d-flex align-center">
-                @if($user->settings && $user->settings->profile)
-                <img src="{{ asset('sellers-profiles/' . $user->settings->profile) }}" alt="Profile Image"
-                    class="profile-img">
-                @else
-                <img src="https://via.placeholder.com/100" alt="Profile Image" class="profile-img">
-                @endif
-                <h1>{{$user->name}}</h1>
-            </div>
+            @auth
+                <div class="d-flex align-center">
+                    @if($user->settings && $user->settings->profile)
+                    <img src="{{ asset('sellers-profiles/' . $user->settings->profile) }}" alt="Profile Image"
+                        class="profile-img">
+                    @else
+                    <img src="https://via.placeholder.com/100" alt="Profile Image" class="profile-img">
+                    @endif
+                    <h1>{{$user->name}}</h1>
+                </div>
+            @endauth    
             <div class="d-flex" style="gap:10px;">
-                <button class="subscribe-btn">ORDER</button>
-                <button class="subscribe-btn" onclick="window.location.href='{{ route('seller.dashboard') }}'">DASHBOARD</button>
-                <button class="subscribe-btn" onclick="openPopup('setting')">SETTING</button>
+                <button class="subscribe-btn" onclick="checkAuthentication()">Orders</button>
+                <button class="subscribe-btn" onclick="checkAuthenticationForDashboard()">Dashboard</button>
+                @auth
+                    <button class="subscribe-btn" onclick="openPopup('setting')">Settings</button>
+                @endauth    
                 <button class="subscribe-btn" onclick="openPopup('mail')">Send Email</button>
             </div>
         </div>
         <div class="profile-info">
             <div class="profile-details" style="width:100%;">
-                <div class="d-flex justify-between">
-                    @if($user->settings && $user->settings->introduction)
-                    <p>{{ $user->settings->introduction }}</p>
-                    @else
-                    <p>There is no introduction of this celebrity present yet.</p>
-                    @endif
-                    <div class="subscriber-count">
-                        <h2>226</h2>
-                        <p>Subscribers</p>
+                @auth
+                    <div class="d-flex justify-between">
+                        @if($user->settings && $user->settings->introduction)
+                        <p>{{ $user->settings->introduction }}</p>
+                        @else
+                        <p>There is no introduction of this celebrity present yet.</p>
+                        @endif
+                        <div class="subscriber-count">
+                            <h2>226</h2>
+                            <p>Subscribers</p>
+                        </div>
                     </div>
-                </div>
-                <div class="social-icons">
-                    @if($user->settings && $user->settings->facebook_link)
-                        <a href="{{$user->settings->facebook_link}}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                    @endif
-                    @if($user->settings && $user->settings->twitter_link)
-                        <a href="{{$user->settings->twitter_link}}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                    @endif
-                    @if($user->settings && $user->settings->instagram_link)
-                        <a href="{{$user->settings->instagram_link}}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                    @endif
-                    @if($user->settings && $user->settings->youtube_link)
-                        <a href="{{$user->settings->youtube_link}}" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                    @endif
-                </div>
+                    <div class="social-icons">
+                        @if($user->settings && $user->settings->facebook_link)
+                            <a href="{{$user->settings->facebook_link}}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                        @endif
+                        @if($user->settings && $user->settings->twitter_link)
+                            <a href="{{$user->settings->twitter_link}}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                        @endif
+                        @if($user->settings && $user->settings->instagram_link)
+                            <a href="{{$user->settings->instagram_link}}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                        @endif
+                        @if($user->settings && $user->settings->youtube_link)
+                            <a href="{{$user->settings->youtube_link}}" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                        @endif
+                    </div>
+                @endauth
             </div>
         </div>
 
@@ -73,7 +79,9 @@
                 <input type="text" placeholder="Search">
                 <div class="d-flex" style="gap:10px;">
                     <p>36 results</p>
-                    <button class="add-new-item" onclick="openPopup('addnewitem')">ADD NEW ITEMS</button>
+                    @auth
+                        <button class="add-new-item" onclick="openPopup('addnewitem')">Add New Item</button>
+                    @endauth    
                 </div>
             </div>
             <div class="product-cards-container" style="width:100%;overflow:unset;">
@@ -82,15 +90,14 @@
                         @foreach($items as $item)
                         <div class="product-item">
                             @php
-                            $firstImage = $item->itemImages->first();
+                                $firstImage = $item->itemImages->first();
                             @endphp
 
                             @if($firstImage)
                             <img style="height: 86%;width: 100%;"
                                 src="{{ asset('item-images/' . $firstImage->image_name) }}" class="product-image">
                             @else
-                            <img style="height: 86%;width: 100%;" src="https://via.placeholder.com/200"
-                                alt="Product Image" class="product-image">
+                                <img src="{{asset('default.jfif')}}" class="product-image">
                             @endif
                             <p class="product-name">{{$item->name}}</p>
                             @if($item->item_type == 'for_rental')
@@ -109,7 +116,9 @@
                 <input type="text" placeholder="Search">
                 <div class="d-flex" style="gap:10px;">
                     <p>36 results</p>
-                    <button class="add-new-item" onclick="openPopup('addnewpost')">ADD NEW POST</button>
+                    @auth
+                        <button class="add-new-item" onclick="openPopup('addnewpost')">Add New Post</button>
+                    @endauth    
                 </div>
             </div>
             <div class="product-cards-container" style="width:100%;overflow:unset;">
@@ -124,8 +133,7 @@
                             <img style="height: 86%;width: 100%;"
                                 src="{{ asset('post-images/' . $firstImage->image_name) }}" class="product-image">
                             @else
-                            <img style="height: 86%;width: 100%;" src="https://via.placeholder.com/200"
-                                alt="Product Image" class="product-image">
+                            <img src="{{asset('default.jfif')}}" class="product-image">
                             @endif
                             @if($post->item->item_type == 'for_rental')
                             <p class="product-price">{{$item->rental_price}}$</p>
@@ -218,7 +226,7 @@
     <div class="container">
         <div class="d-flex justify-between"
             style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Add New Post 123</h2>
+            <h2>Add New Post</h2>
         </div>
         <div class="sub-container">
             <form id="createPost" action="{{ route('post.store') }}" method="post" enctype="multipart/form-data">
@@ -246,55 +254,92 @@
 </div>
 
 <!-- Seller settings pop up -->
-<div id="setting-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Seller Settings</h2>
-        </div>
-        <form id="updateSettings" action="{{ route('update.seller.settings') }}" method="post">
-            @csrf
-            <div class="sub-container">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Name" value="{{$user->name}}">
-
-                <label for="introduction">Introduce</label>
-                @if($user->settings && $user->settings->introduction)
-                    <textarea id="introduction" name="introduction" rows="3">{{ $user->settings->introduction }}</textarea>
-                @else
-                    <textarea id="introduction" name="introduction" rows="3"></textarea>
-                @endif
-
-                <label for="profile_picture">Profile Picture</label>
-                <input type="file" id="profile_picture" name="profile_picture">
-
-
-                <label for="facebook_link">Facebook Link</label>
-                <input type="text" id="facebook_link" name="facebook_link"
-                    value="{{$user->settings->facebook_link ?? 'N/A'}}">
-
-
-                <label for="youtube_link">Youtube Link</label>
-                <input type="text" id="youtube_link" name="youtube_link"
-                    value="{{$user->settings->youtube_link ?? 'N/A'}}">
-
-                <label for="instagram_link">Instagram Link</label>
-                <input type="text" id="instagram_link" name="instagram_link"
-                    value="{{$user->settings->instagram_link ?? 'N/A'}}">
-
-                <label for="twitter_link">Twitter Link</label>
-                <input type="text" id="twitter_link" name="twitter_link"
-                    value="{{$user->settings->twitter_link ?? 'N/A'}}">
-
-                <button type="submit" class="apply-btn">Update</button>
+@auth
+    <div id="setting-popup" class="popup">
+        <div class="container">
+            <div class="d-flex justify-between"
+                style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+                <h2>Seller Settings</h2>
             </div>
-        </form>
+            <form id="updateSettings" action="{{ route('update.seller.settings') }}" method="post">
+                @csrf
+                <div class="sub-container">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Name" value="{{$user->name}}">
+
+                    <label for="introduction">Introduce</label>
+                    @if($user->settings && $user->settings->introduction)
+                        <textarea id="introduction" name="introduction" rows="3">{{ $user->settings->introduction }}</textarea>
+                    @else
+                        <textarea id="introduction" name="introduction" rows="3"></textarea>
+                    @endif
+
+                    <label for="profile_picture">Profile Picture</label>
+                    <input type="file" id="profile_picture" name="profile_picture">
+
+
+                    <label for="facebook_link">Facebook Link</label>
+                    <input type="text" id="facebook_link" name="facebook_link"
+                        value="{{$user->settings->facebook_link ?? 'N/A'}}">
+
+
+                    <label for="youtube_link">Youtube Link</label>
+                    <input type="text" id="youtube_link" name="youtube_link"
+                        value="{{$user->settings->youtube_link ?? 'N/A'}}">
+
+                    <label for="instagram_link">Instagram Link</label>
+                    <input type="text" id="instagram_link" name="instagram_link"
+                        value="{{$user->settings->instagram_link ?? 'N/A'}}">
+
+                    <label for="twitter_link">Twitter Link</label>
+                    <input type="text" id="twitter_link" name="twitter_link"
+                        value="{{$user->settings->twitter_link ?? 'N/A'}}">
+
+                    <button type="submit" class="apply-btn">Update</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+@endauth
 
 @endsection
 
 @push('scripts')
+<!-- to redirect  -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function checkAuthentication() {
+    fetch('{{ route('seller.orders') }}')
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '{{ route('seller.orders') }}';
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Authentication Required',
+                    text: 'You need to login first!'
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+function checkAuthenticationForDashboard() {
+    fetch('{{ route('seller.dashboard') }}')
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '{{ route('seller.dashboard') }}';
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Authentication Required',
+                    text: 'You need to login first!'
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
+
 <!-- script for switching tabs  -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -332,11 +377,6 @@
         var errorAlert = document.getElementById('alert-danger');
         var errorList = document.getElementById('error-list');
         var successAlert = document.getElementById('alert-success');
-        document.getElementById('images').addEventListener('change', function() {
-            const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-            console.log('Selected files: ', fileNames); // Debugging output
-            // You can display these names in a paragraph or div if you want to show them on the UI.
-        });
         myForm.addEventListener('submit', function(event) {
             event.preventDefault();
             var formElements = myForm.querySelectorAll('input, select, textarea');

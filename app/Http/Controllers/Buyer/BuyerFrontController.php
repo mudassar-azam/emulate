@@ -12,7 +12,7 @@ class BuyerFrontController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::where('role', 'seller')->whereIn('id', [3, 4, 5, 6])->get();
+        $users = User::where('role', 'seller')->take(4)->get();
         $sellers = User::where('role', 'seller')->get();
         $items = Item::all();
 

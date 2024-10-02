@@ -18,7 +18,6 @@ class AdminController extends Controller
         $email = $request->input('email');
         $signUpLink = route('buyer.front', ['email' => $email, 'modal' => 'true']);
 
-        // Send the invitation email
         Mail::to($email)->send(new InvitationEmail($signUpLink));
 
         return back()->with('success', 'Invitation email sent successfully!');

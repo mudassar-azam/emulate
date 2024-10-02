@@ -71,9 +71,21 @@
         <div class="product-slider" id="uniqueProductSlider">
             @foreach($items as $item)
             <div class="product-item">
-                <img src="https://via.placeholder.com/200" alt="Product 1" class="product-image">
-                <p class="product-name">Product 1</p>
-                <p class="product-price">$50.00</p>
+                @php
+                    $firstImage = $item->itemImages->first();
+                @endphp
+
+                @if($firstImage)
+                    <img src="{{ asset('item-images/' . $firstImage->image_name) }}" style="height: 90%;width: 100%;"class="product-image">
+                @else
+                    <img src="{{asset('default.jfif')}}" style="height: 90%;width: 100%;"class="product-image">
+                @endif
+                <p class="product-name">{{$item->name}}</p>
+                @if($item->item_type == 'for_rental')
+                    <p class="product-price">{{$item->rental_price}}$</p>
+                @else
+                    <p class="product-price">{{$item->sale_price}}$</p>
+                @endif
             </div>
             @endforeach
         </div>

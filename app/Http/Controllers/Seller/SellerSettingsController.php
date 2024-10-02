@@ -14,8 +14,7 @@ class SellerSettingsController extends Controller
 {
     public function update(Request $request){
 
-        // we will use auth id here late
-        $user_id = 3;
+        $user_id = Auth::user()->id;
 
         $settings = SellerSettings::where('user_id',$user_id)->first();
         if($settings){
@@ -38,7 +37,6 @@ class SellerSettingsController extends Controller
             }
 
 
-            // later we will use auth id of logged in user
             $settings->user_id = $user_id;
 
             $settings->save();
@@ -64,8 +62,6 @@ class SellerSettingsController extends Controller
                 $settings->profile = $uniqueName;
             }
 
-
-            // later we will use auth id of logged in user
             $settings->user_id = $user_id;
 
             $settings->save();
