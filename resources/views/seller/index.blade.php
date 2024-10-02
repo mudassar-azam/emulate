@@ -1,14 +1,14 @@
 @extends('layouts.app')
 @section('content')
 <style>
-    .image-preview-container img {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px;
-        margin: 10px;
-        max-width: 150px;
-        max-height: 150px;
-    }
+.image-preview-container img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 10px;
+    max-width: 150px;
+    max-height: 150px;
+}
 </style>
 <div id="alert-danger" class="alert alert-danger" style="display: none;">
     <ul id="error-list"></ul>
@@ -17,61 +17,59 @@
 <main class="main">
     <div class="profile-section">
         <div class="profile-header">
-            @auth
-                <div class="d-flex align-center">
-                    @if($user->settings && $user->settings->profile)
-                    <img src="{{ asset('sellers-profiles/' . $user->settings->profile) }}" alt="Profile Image"
-                        class="profile-img">
-                    @else
-                    <img src="https://via.placeholder.com/100" alt="Profile Image" class="profile-img">
-                    @endif
-                    <h1>{{$user->name}}</h1>
-                </div>
-            @endauth    
+            <div class="d-flex align-center">
+                @if($user->settings && $user->settings->profile)
+                <img src="{{ asset('sellers-profiles/' . $user->settings->profile) }}" alt="Profile Image"
+                    class="profile-img">
+                @else
+                <img src="{{asset('default.jfif')}}" alt="Profile Image" class="profile-img">
+                @endif
+                <h1>{{$user->name}}</h1>
+            </div>
             <div class="d-flex" style="gap:10px;">
                 <button class="subscribe-btn" onclick="checkAuthentication()">Orders</button>
                 <button class="subscribe-btn" onclick="checkAuthenticationForDashboard()">Dashboard</button>
-                @auth
-                    <button class="subscribe-btn" onclick="openPopup('setting')">Settings</button>
-                @endauth    
-                <button class="subscribe-btn" onclick="openPopup('mail')">Send Email</button>
+                <button class="subscribe-btn" onclick="openPopup('setting')">Settings</button>
+                @if(Auth::user()->role == 'admin')
+                    <button class="subscribe-btn" onclick="openPopup('mail')">Send Email</button>
+                @endif    
             </div>
         </div>
         <div class="profile-info">
             <div class="profile-details" style="width:100%;">
-                @auth
-                    <div class="d-flex justify-between">
-                        @if($user->settings && $user->settings->introduction)
-                        <p>{{ $user->settings->introduction }}</p>
-                        @else
-                        <p>There is no introduction of this celebrity present yet.</p>
-                        @endif
-                        <div class="subscriber-count">
-                            <h2>226</h2>
-                            <p>Subscribers</p>
-                        </div>
+                <div class="d-flex justify-between">
+                    @if($user->settings && $user->settings->introduction)
+                    <p>{{ $user->settings->introduction }}</p>
+                    @else
+                    <p>There is no introduction of this celebrity present yet.</p>
+                    @endif
+                    <div class="subscriber-count">
+                        <h2>226</h2>
+                        <p>Subscribers</p>
                     </div>
-                    <div class="social-icons">
-                        @if($user->settings && $user->settings->facebook_link)
-                            <a href="{{$user->settings->facebook_link}}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                        @endif
-                        @if($user->settings && $user->settings->twitter_link)
-                            <a href="{{$user->settings->twitter_link}}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                        @endif
-                        @if($user->settings && $user->settings->instagram_link)
-                            <a href="{{$user->settings->instagram_link}}" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                        @endif
-                        @if($user->settings && $user->settings->youtube_link)
-                            <a href="{{$user->settings->youtube_link}}" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                        @endif
-                    </div>
-                @endauth
+                </div>
+                <div class="social-icons">
+                    @if($user->settings && $user->settings->facebook_link)
+                    <a href="{{$user->settings->facebook_link}}" target="_blank"><i
+                            class="fa-brands fa-facebook"></i></a>
+                    @endif
+                    @if($user->settings && $user->settings->twitter_link)
+                    <a href="{{$user->settings->twitter_link}}" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                    @endif
+                    @if($user->settings && $user->settings->instagram_link)
+                    <a href="{{$user->settings->instagram_link}}" target="_blank"><i
+                            class="fa-brands fa-instagram"></i></a>
+                    @endif
+                    @if($user->settings && $user->settings->youtube_link)
+                    <a href="{{$user->settings->youtube_link}}" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                    @endif
+                </div>
             </div>
         </div>
 
         <div class="tabs">
-            <button class="tab active">ITEMS FOR RENT OR PURCHASE</button>
-            <button class="tab">POST</button>
+            <button class="tab active">Items For Rent Or Purchase</button>
+            <button class="tab">Post</button>
         </div>
 
         <div class="tab1-content active">
@@ -79,9 +77,7 @@
                 <input type="text" placeholder="Search">
                 <div class="d-flex" style="gap:10px;">
                     <p>36 results</p>
-                    @auth
-                        <button class="add-new-item" onclick="openPopup('addnewitem')">Add New Item</button>
-                    @endauth    
+                    <button class="add-new-item" onclick="openPopup('addnewitem')">Add New Item</button>
                 </div>
             </div>
             <div class="product-cards-container" style="width:100%;overflow:unset;">
@@ -90,17 +86,17 @@
                         @foreach($items as $item)
                         <div class="product-item">
                             @php
-                                $firstImage = $item->itemImages->first();
+                            $firstImage = $item->itemImages->first();
                             @endphp
 
                             @if($firstImage)
                             <img style="height: 86%;width: 100%;"
                                 src="{{ asset('item-images/' . $firstImage->image_name) }}" class="product-image">
                             @else
-                                <img src="{{asset('default.jfif')}}" class="product-image">
+                            <img src="{{asset('default.jfif')}}" class="product-image">
                             @endif
                             <p class="product-name">{{$item->name}}</p>
-                            @if($item->item_type == 'for_rental')
+                            @if($item->item_type == 'for_rent')
                             <p class="product-price">{{$item->rental_price}}$</p>
                             @else
                             <p class="product-price">{{$item->sale_price}}$</p>
@@ -116,9 +112,7 @@
                 <input type="text" placeholder="Search">
                 <div class="d-flex" style="gap:10px;">
                     <p>36 results</p>
-                    @auth
-                        <button class="add-new-item" onclick="openPopup('addnewpost')">Add New Post</button>
-                    @endauth    
+                    <button class="add-new-item" onclick="openPopup('addnewpost')">Add New Post</button>
                 </div>
             </div>
             <div class="product-cards-container" style="width:100%;overflow:unset;">
@@ -207,7 +201,7 @@
 <div id="mail-popup" class="popup">
     <div class="container">
         <div class="d-flex justify-between"
-             style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
             <h2>Send signup link</h2>
         </div>
         <div class="sub-container">
@@ -254,445 +248,411 @@
 </div>
 
 <!-- Seller settings pop up -->
-@auth
-    <div id="setting-popup" class="popup">
-        <div class="container">
-            <div class="d-flex justify-between"
-                style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-                <h2>Seller Settings</h2>
-            </div>
-            <form id="updateSettings" action="{{ route('update.seller.settings') }}" method="post">
-                @csrf
-                <div class="sub-container">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Name" value="{{$user->name}}">
-
-                    <label for="introduction">Introduce</label>
-                    @if($user->settings && $user->settings->introduction)
-                        <textarea id="introduction" name="introduction" rows="3">{{ $user->settings->introduction }}</textarea>
-                    @else
-                        <textarea id="introduction" name="introduction" rows="3"></textarea>
-                    @endif
-
-                    <label for="profile_picture">Profile Picture</label>
-                    <input type="file" id="profile_picture" name="profile_picture">
-
-
-                    <label for="facebook_link">Facebook Link</label>
-                    <input type="text" id="facebook_link" name="facebook_link"
-                        value="{{$user->settings->facebook_link ?? 'N/A'}}">
-
-
-                    <label for="youtube_link">Youtube Link</label>
-                    <input type="text" id="youtube_link" name="youtube_link"
-                        value="{{$user->settings->youtube_link ?? 'N/A'}}">
-
-                    <label for="instagram_link">Instagram Link</label>
-                    <input type="text" id="instagram_link" name="instagram_link"
-                        value="{{$user->settings->instagram_link ?? 'N/A'}}">
-
-                    <label for="twitter_link">Twitter Link</label>
-                    <input type="text" id="twitter_link" name="twitter_link"
-                        value="{{$user->settings->twitter_link ?? 'N/A'}}">
-
-                    <button type="submit" class="apply-btn">Update</button>
-                </div>
-            </form>
+<div id="setting-popup" class="popup">
+    <div class="container">
+        <div class="d-flex justify-between"
+            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+            <h2>Seller Settings</h2>
         </div>
+        <form id="updateSettings" action="{{ route('update.seller.settings') }}" method="post">
+            @csrf
+            <div class="sub-container">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Name" value="{{$user->name}}">
+
+                <label for="introduction">Introduce</label>
+                @if($user->settings && $user->settings->introduction)
+                <textarea id="introduction" name="introduction" rows="3">{{ $user->settings->introduction }}</textarea>
+                @else
+                <textarea id="introduction" name="introduction" rows="3"></textarea>
+                @endif
+
+                <label for="profile_picture">Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture">
+
+
+                <label for="facebook_link">Facebook Link</label>
+                <input type="text" id="facebook_link" name="facebook_link"
+                    value="{{$user->settings->facebook_link ?? 'N/A'}}">
+
+
+                <label for="youtube_link">Youtube Link</label>
+                <input type="text" id="youtube_link" name="youtube_link"
+                    value="{{$user->settings->youtube_link ?? 'N/A'}}">
+
+                <label for="instagram_link">Instagram Link</label>
+                <input type="text" id="instagram_link" name="instagram_link"
+                    value="{{$user->settings->instagram_link ?? 'N/A'}}">
+
+                <label for="twitter_link">Twitter Link</label>
+                <input type="text" id="twitter_link" name="twitter_link"
+                    value="{{$user->settings->twitter_link ?? 'N/A'}}">
+
+                <button type="submit" class="apply-btn">Update</button>
+            </div>
+        </form>
     </div>
-@endauth
+</div>
 
 @endsection
 
 @push('scripts')
 <!-- to redirect  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-function checkAuthentication() {
-    fetch('{{ route('seller.orders') }}')
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '{{ route('seller.orders') }}';
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Authentication Required',
-                    text: 'You need to login first!'
-                });
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-function checkAuthenticationForDashboard() {
-    fetch('{{ route('seller.dashboard') }}')
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '{{ route('seller.dashboard') }}';
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Authentication Required',
-                    text: 'You need to login first!'
-                });
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-</script>
 
 <!-- script for switching tabs  -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tabButtons = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab1-content, .tab2-content');
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab1-content, .tab2-content');
 
-        function switchTab(event) {
-            tabButtons.forEach(button => button.classList.remove('active'));
-            tabContents.forEach(content => content.style.display = 'none');
-            tabContents.forEach(content => content.style.opacity = 0);
+    function switchTab(event) {
+        tabButtons.forEach(button => button.classList.remove('active'));
+        tabContents.forEach(content => content.style.display = 'none');
+        tabContents.forEach(content => content.style.opacity = 0);
 
-            event.target.classList.add('active');
+        event.target.classList.add('active');
 
-            if (event.target.textContent.includes('ITEMS FOR RENT OR PURCHASE')) {
-                document.querySelector('.tab1-content').style.display = 'block';
-                document.querySelector('.tab1-content').style.opacity = 1;
-            } else if (event.target.textContent.includes('POST')) {
-                document.querySelector('.tab2-content').style.display = 'block';
-                document.querySelector('.tab2-content').style.opacity = 1;
-            }
+        if (event.target.textContent.includes('ITEMS FOR RENT OR PURCHASE')) {
+            document.querySelector('.tab1-content').style.display = 'block';
+            document.querySelector('.tab1-content').style.opacity = 1;
+        } else if (event.target.textContent.includes('POST')) {
+            document.querySelector('.tab2-content').style.display = 'block';
+            document.querySelector('.tab2-content').style.opacity = 1;
         }
+    }
 
-        tabButtons.forEach(button => button.addEventListener('click', switchTab));
+    tabButtons.forEach(button => button.addEventListener('click', switchTab));
 
-        tabButtons[0].classList.add('active');
-        tabContents[0].style.display = 'block';
-        tabContents[0].style.opacity = 1;
-    });
+    tabButtons[0].classList.add('active');
+    tabContents[0].style.display = 'block';
+    tabContents[0].style.opacity = 1;
+});
 </script>
 
 <!-- script for item  -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var myForm = document.getElementById('createItem');
-        var errorAlert = document.getElementById('alert-danger');
-        var errorList = document.getElementById('error-list');
-        var successAlert = document.getElementById('alert-success');
-        myForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formElements = myForm.querySelectorAll('input, select, textarea');
-            formElements.forEach(function(element) {
-                element.style.border = '';
-                if (element.type === 'file') {
-                    element.classList.remove('file-not-valid');
+document.addEventListener('DOMContentLoaded', function() {
+    var myForm = document.getElementById('createItem');
+    var errorAlert = document.getElementById('alert-danger');
+    var errorList = document.getElementById('error-list');
+    var successAlert = document.getElementById('alert-success');
+    myForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formElements = myForm.querySelectorAll('input, select, textarea');
+        formElements.forEach(function(element) {
+            element.style.border = '';
+            if (element.type === 'file') {
+                element.classList.remove('file-not-valid');
+            }
+        });
+        var formData = new FormData(myForm);
+        fetch(myForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
                 }
-            });
-            var formData = new FormData(myForm);
-            fetch(myForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        errorAlert.style.display = 'none';
-                        successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        setTimeout(function() {
-                            successAlert.style.display = 'none';
-                        }, 4000);
-                        location.reload();
-                    } else {
-                        errorList.innerHTML = '';
-                        if (data.errors.length > 0) {
-                            var li = document.createElement('li');
-                            li.textContent = data.errors[0].message;
-                            errorList.appendChild(li);
-                            errorAlert.style.display = 'block';
-                            successAlert.style.display = 'none';
-                            var firstErrorField;
-                            data.errors.forEach(function(error, index) {
-                                var errorField = myForm.querySelector(
-                                    `[name="${error.field}"]`);
-                                if (errorField) {
-                                    errorField.style.border = '1px solid red';
-                                    if (errorField.type === 'file') {
-                                        errorField.classList.add('file-not-valid');
-                                    }
-                                    if (index === 0) {
-                                        firstErrorField = errorField;
-                                    }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    errorAlert.style.display = 'none';
+                    successAlert.textContent = data.message;
+                    successAlert.style.display = 'block';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 4000);
+                    location.reload();
+                } else {
+                    errorList.innerHTML = '';
+                    if (data.errors.length > 0) {
+                        var li = document.createElement('li');
+                        li.textContent = data.errors[0].message;
+                        errorList.appendChild(li);
+                        errorAlert.style.display = 'block';
+                        successAlert.style.display = 'none';
+                        var firstErrorField;
+                        data.errors.forEach(function(error, index) {
+                            var errorField = myForm.querySelector(
+                                `[name="${error.field}"]`);
+                            if (errorField) {
+                                errorField.style.border = '1px solid red';
+                                if (errorField.type === 'file') {
+                                    errorField.classList.add('file-not-valid');
                                 }
-                            });
-
-                            // Focus on the first invalid input field
-                            if (firstErrorField) {
-                                firstErrorField.focus();
+                                if (index === 0) {
+                                    firstErrorField = errorField;
+                                }
                             }
-                            setTimeout(function() {
-                                errorAlert.style.display = 'none';
-                            }, 3000);
+                        });
+
+                        // Focus on the first invalid input field
+                        if (firstErrorField) {
+                            firstErrorField.focus();
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-        myForm.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
+                        setTimeout(function() {
+                            errorAlert.style.display = 'none';
+                        }, 3000);
                     }
                 }
-            }
-        });
-        myForm.addEventListener('change', function(event) {
-            if (event.target.tagName === 'SELECT') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
+    myForm.addEventListener('input', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+    myForm.addEventListener('change', function(event) {
+        if (event.target.tagName === 'SELECT') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+});
 </script>
 
 <!-- to toggle type  -->
 <script>
-    document.getElementById('item_type').addEventListener('change', function() {
-        const saleDiv = document.getElementById('for-sale');
-        const rentDiv = document.getElementById('for-rent');
+document.getElementById('item_type').addEventListener('change', function() {
+    const saleDiv = document.getElementById('for-sale');
+    const rentDiv = document.getElementById('for-rent');
 
-        if (this.value === 'for_sale') {
-            saleDiv.style.display = 'block';
-            rentDiv.style.display = 'none';
-        } else if (this.value === 'for_rent') {
-            rentDiv.style.display = 'block';
-            saleDiv.style.display = 'none';
-        } else {
-            saleDiv.style.display = 'none';
-            rentDiv.style.display = 'none';
-        }
-    });
+    if (this.value === 'for_sale') {
+        saleDiv.style.display = 'block';
+        rentDiv.style.display = 'none';
+    } else if (this.value === 'for_rent') {
+        rentDiv.style.display = 'block';
+        saleDiv.style.display = 'none';
+    } else {
+        saleDiv.style.display = 'none';
+        rentDiv.style.display = 'none';
+    }
+});
 </script>
 
 <!-- script for post  -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var myForm = document.getElementById('createPost');
-        var errorAlert = document.getElementById('alert-danger');
-        var errorList = document.getElementById('error-list');
-        var successAlert = document.getElementById('alert-success');
-        document.getElementById('images').addEventListener('change', function() {
-            const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-            console.log('Selected files: ', fileNames); // Debugging output
-            // You can display these names in a paragraph or div if you want to show them on the UI.
-        });
-        myForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formElements = myForm.querySelectorAll('input, select, textarea');
-            formElements.forEach(function(element) {
-                element.style.border = '';
-                if (element.type === 'file') {
-                    element.classList.remove('file-not-valid');
-                }
-            });
-            var formData = new FormData(myForm);
-            fetch(myForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        errorAlert.style.display = 'none';
-                        successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        setTimeout(function() {
-                            successAlert.style.display = 'none';
-                        }, 4000);
-                        location.reload();
-                    } else {
-                        errorList.innerHTML = '';
-                        if (data.errors.length > 0) {
-                            var li = document.createElement('li');
-                            li.textContent = data.errors[0].message;
-                            errorList.appendChild(li);
-                            errorAlert.style.display = 'block';
-                            successAlert.style.display = 'none';
-                            var firstErrorField;
-                            data.errors.forEach(function(error, index) {
-                                var errorField = myForm.querySelector(
-                                    `[name="${error.field}"]`);
-                                if (errorField) {
-                                    errorField.style.border = '1px solid red';
-                                    if (errorField.type === 'file') {
-                                        errorField.classList.add('file-not-valid');
-                                    }
-                                    if (index === 0) {
-                                        firstErrorField = errorField;
-                                    }
-                                }
-                            });
-
-                            // Focus on the first invalid input field
-                            if (firstErrorField) {
-                                firstErrorField.focus();
-                            }
-                            setTimeout(function() {
-                                errorAlert.style.display = 'none';
-                            }, 3000);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-        myForm.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
-        myForm.addEventListener('change', function(event) {
-            if (event.target.tagName === 'SELECT') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    var myForm = document.getElementById('createPost');
+    var errorAlert = document.getElementById('alert-danger');
+    var errorList = document.getElementById('error-list');
+    var successAlert = document.getElementById('alert-success');
+    document.getElementById('images').addEventListener('change', function() {
+        const fileNames = Array.from(this.files).map(file => file.name).join(', ');
+        console.log('Selected files: ', fileNames); // Debugging output
+        // You can display these names in a paragraph or div if you want to show them on the UI.
     });
+    myForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formElements = myForm.querySelectorAll('input, select, textarea');
+        formElements.forEach(function(element) {
+            element.style.border = '';
+            if (element.type === 'file') {
+                element.classList.remove('file-not-valid');
+            }
+        });
+        var formData = new FormData(myForm);
+        fetch(myForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    errorAlert.style.display = 'none';
+                    successAlert.textContent = data.message;
+                    successAlert.style.display = 'block';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 4000);
+                    location.reload();
+                } else {
+                    errorList.innerHTML = '';
+                    if (data.errors.length > 0) {
+                        var li = document.createElement('li');
+                        li.textContent = data.errors[0].message;
+                        errorList.appendChild(li);
+                        errorAlert.style.display = 'block';
+                        successAlert.style.display = 'none';
+                        var firstErrorField;
+                        data.errors.forEach(function(error, index) {
+                            var errorField = myForm.querySelector(
+                                `[name="${error.field}"]`);
+                            if (errorField) {
+                                errorField.style.border = '1px solid red';
+                                if (errorField.type === 'file') {
+                                    errorField.classList.add('file-not-valid');
+                                }
+                                if (index === 0) {
+                                    firstErrorField = errorField;
+                                }
+                            }
+                        });
+
+                        // Focus on the first invalid input field
+                        if (firstErrorField) {
+                            firstErrorField.focus();
+                        }
+                        setTimeout(function() {
+                            errorAlert.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+    myForm.addEventListener('input', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+    myForm.addEventListener('change', function(event) {
+        if (event.target.tagName === 'SELECT') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+});
 </script>
 
 <!-- script to update settings  -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var myForm = document.getElementById('updateSettings');
-        var errorAlert = document.getElementById('alert-danger');
-        var errorList = document.getElementById('error-list');
-        var successAlert = document.getElementById('alert-success');
-        document.getElementById('images').addEventListener('change', function() {
-            const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-            console.log('Selected files: ', fileNames); // Debugging output
-            // You can display these names in a paragraph or div if you want to show them on the UI.
-        });
-        myForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formElements = myForm.querySelectorAll('input, select, textarea');
-            formElements.forEach(function(element) {
-                element.style.border = '';
-                if (element.type === 'file') {
-                    element.classList.remove('file-not-valid');
-                }
-            });
-            var formData = new FormData(myForm);
-            fetch(myForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        errorAlert.style.display = 'none';
-                        successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        setTimeout(function() {
-                            successAlert.style.display = 'none';
-                        }, 4000);
-                        location.reload();
-                    } else {
-                        errorList.innerHTML = '';
-                        if (data.errors.length > 0) {
-                            var li = document.createElement('li');
-                            li.textContent = data.errors[0].message;
-                            errorList.appendChild(li);
-                            errorAlert.style.display = 'block';
-                            successAlert.style.display = 'none';
-                            var firstErrorField;
-                            data.errors.forEach(function(error, index) {
-                                var errorField = myForm.querySelector(
-                                    `[name="${error.field}"]`);
-                                if (errorField) {
-                                    errorField.style.border = '1px solid red';
-                                    if (errorField.type === 'file') {
-                                        errorField.classList.add('file-not-valid');
-                                    }
-                                    if (index === 0) {
-                                        firstErrorField = errorField;
-                                    }
-                                }
-                            });
-
-                            // Focus on the first invalid input field
-                            if (firstErrorField) {
-                                firstErrorField.focus();
-                            }
-                            setTimeout(function() {
-                                errorAlert.style.display = 'none';
-                            }, 3000);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-        myForm.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
-        myForm.addEventListener('change', function(event) {
-            if (event.target.tagName === 'SELECT') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    var myForm = document.getElementById('updateSettings');
+    var errorAlert = document.getElementById('alert-danger');
+    var errorList = document.getElementById('error-list');
+    var successAlert = document.getElementById('alert-success');
+    document.getElementById('images').addEventListener('change', function() {
+        const fileNames = Array.from(this.files).map(file => file.name).join(', ');
+        console.log('Selected files: ', fileNames); // Debugging output
+        // You can display these names in a paragraph or div if you want to show them on the UI.
     });
+    myForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formElements = myForm.querySelectorAll('input, select, textarea');
+        formElements.forEach(function(element) {
+            element.style.border = '';
+            if (element.type === 'file') {
+                element.classList.remove('file-not-valid');
+            }
+        });
+        var formData = new FormData(myForm);
+        fetch(myForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    errorAlert.style.display = 'none';
+                    successAlert.textContent = data.message;
+                    successAlert.style.display = 'block';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 4000);
+                    location.reload();
+                } else {
+                    errorList.innerHTML = '';
+                    if (data.errors.length > 0) {
+                        var li = document.createElement('li');
+                        li.textContent = data.errors[0].message;
+                        errorList.appendChild(li);
+                        errorAlert.style.display = 'block';
+                        successAlert.style.display = 'none';
+                        var firstErrorField;
+                        data.errors.forEach(function(error, index) {
+                            var errorField = myForm.querySelector(
+                                `[name="${error.field}"]`);
+                            if (errorField) {
+                                errorField.style.border = '1px solid red';
+                                if (errorField.type === 'file') {
+                                    errorField.classList.add('file-not-valid');
+                                }
+                                if (index === 0) {
+                                    firstErrorField = errorField;
+                                }
+                            }
+                        });
+
+                        // Focus on the first invalid input field
+                        if (firstErrorField) {
+                            firstErrorField.focus();
+                        }
+                        setTimeout(function() {
+                            errorAlert.style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+    myForm.addEventListener('input', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+    myForm.addEventListener('change', function(event) {
+        if (event.target.tagName === 'SELECT') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+});
 </script>
 @endpush

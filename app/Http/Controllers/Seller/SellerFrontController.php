@@ -24,18 +24,12 @@ class SellerFrontController extends Controller
 
 
     public function dashboard(){
-        if (auth()->check()) {
-            return view('seller.dashboard');
-        }
-        return response()->json(['error' => 'Authentication Required'], 401);
+        return view('seller.dashboard');
     }
 
     public function order()
     {
-        if (auth()->check()) {
-            return view('seller.orders');
-        }
-        return response()->json(['error' => 'Authentication Required'], 401);
+        return view('seller.orders');
     }
 
     public function showSignupForm(Request $request)

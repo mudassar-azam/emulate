@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('sale_price', 8, 2);
+            $table->decimal('sale_price', 8, 2)->nullable();
             $table->decimal('rental_price', 8, 2)->nullable();
             $table->string('size');
             $table->string('item_type');

@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-
 <main class="main">
     <!-- Banner Section -->
     <section class="banner">
@@ -21,7 +20,7 @@
                     @if($user->settings && $user->settings->profile)
                     <img src="{{ asset('sellers-profiles/' . $user->settings->profile) }}">
                     @else
-                    <img src="https://via.placeholder.com/400x300" alt="Image 1">
+                    <img src="{{asset('default.jfif')}}" alt="Image 1">
                     @endif
                     <div class="overlay2">
                         <div class="overlay-content">
@@ -46,7 +45,7 @@
                     @if($seller->settings && $seller->settings->profile)
                         <img src="{{ asset('sellers-profiles/' . $seller->settings->profile) }}">
                     @else
-                        <img src="https://via.placeholder.com/400x300" alt="Image 1">
+                        <img src="{{asset('default.jfif')}}" alt="Image 1">
                     @endif
                     <p>{{$seller->name}}</p>
                 </div>
@@ -81,7 +80,7 @@
                     <img src="{{asset('default.jfif')}}" style="height: 90%;width: 100%;"class="product-image">
                 @endif
                 <p class="product-name">{{$item->name}}</p>
-                @if($item->item_type == 'for_rental')
+                @if($item->item_type == 'for_rent')
                     <p class="product-price">{{$item->rental_price}}$</p>
                 @else
                     <p class="product-price">{{$item->sale_price}}$</p>

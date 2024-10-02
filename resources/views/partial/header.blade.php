@@ -25,6 +25,7 @@
         <div class="logo"><a href="/">Emulate</a></div>
         <nav>
             <ul class="nav-links">
+                <li><a href="{{route('products.index')}}">Products</a></li>
                 <li><a href="#">Celebrities</a></li>
                 <li><a href="#">Rental</a></li>
                 <li><a href="#">Purchase</a></li>
@@ -302,7 +303,8 @@
     </div>
 
     <!-- Checkout Button -->
-    <button class="checkout-btn">Checkout</button>
+    <button class="checkout-btn" onclick="window.location.href='{{ route('buyer.checkout') }}'">Checkout</button>
+
 </div>
 
 <!-- Sidebar for menu -->

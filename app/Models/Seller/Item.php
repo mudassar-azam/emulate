@@ -4,6 +4,7 @@ namespace App\Models\Seller;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Item extends Model
 {
@@ -22,5 +23,10 @@ class Item extends Model
     public function itemImages()
     {
         return $this->hasMany(ItemImage::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); 
     }
 }
