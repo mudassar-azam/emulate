@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Seller\SellerFrontController;
 use App\Http\Controllers\Seller\SellerSettingsController;
 use App\Http\Controllers\Seller\ItemController;
@@ -11,8 +13,11 @@ use App\Http\Controllers\Buyer\CheckoutController;
 use App\Http\Controllers\Buyer\CartController;
 use App\Http\Middleware\CheckUserRole;
 
-
+// auth 
 Auth::routes();
+Route::post('register', [RegisterController::class, 'register'])->name('register');
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+
 // seller
 Route::group(['middleware' => CheckUserRole::class], function () {
     Route::get('/seller', [SellerFrontController::class, 'index'])->name('seller.front');
