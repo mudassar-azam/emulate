@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <main class="main">
+    <div id="alert-success" class="alert alert-success" style="display: none;"></div>
     <div class="back-btn">
         <i class="fa-solid fa-arrow-left"></i>
     </div>
@@ -11,9 +12,9 @@
                     <div class="demo">
                         <ul id="lightSlider">
                             @foreach($product->itemImages as $image)
-                                <li data-thumb="{{ asset('item-images/' . $image->image_name) }}">
-                                    <img src="{{ asset('item-images/' . $image->image_name) }}" />
-                                </li>
+                            <li data-thumb="{{ asset('item-images/' . $image->image_name) }}">
+                                <img src="{{ asset('item-images/' . $image->image_name) }}" />
+                            </li>
                             @endforeach
                         </ul>
                     </div>
@@ -41,27 +42,35 @@
 
                 <div class="product-pricing">
                     @if($product->item_type == 'for_rent')
-                        <p><strong>Rent Price Per Day : {{$product->rental_price}}$</strong></p>
-                    @else    
-                        <p class="retail">Sale Price : {{$product->sale_price}}$</p>
-                    @endif    
+                    <p><strong>Rent Price Per Day : {{$product->rental_price}}$</strong></p>
+                    @else
+                    <p class="retail">Sale Price : {{$product->sale_price}}$</p>
+                    @endif
                 </div>
-
+                @auth
                 <div class="product-actions">
                     @if($product->item_type == 'for_rent')
-                        <button class="rent-btn" onclick="openPopup('rent')">Rent</button>
+                    <button class="rent-btn" onclick="openPopup('rent')">Rent</button>
                     @else
-                        <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
-                    @endif    
-                    <button class="rent-btn">Add To Cart</button>
+                    <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
+                    @endif
+                    <form action="{{route('cart.store')}}" method="post">
+                        @csrf
+                        <input type="hidden" name="ptoduct_id" value="{{$product->id}}">
+                        <button id="add-to-cart" data-product-id="{{ $product->id }}" style="width: 100%;"
+                            class="rent-btn">Add To Cart</button>
+                    </form>
                 </div>
+                @else
+                <h3>Login ! To Rent Or Buy Item </h3>
+                @endauth
             </div>
         </div>
 
         <div class="product-section2">
             @foreach($product->itemImages as $image)
-                <div class="box"><img src="{{ asset('item-images/' . $image->image_name) }}" style="width: 100%;"></div>
-            @endforeach    
+            <div class="box"><img src="{{ asset('item-images/' . $image->image_name) }}" style="width: 100%;"></div>
+            @endforeach
         </div>
         <div class="product-right-details special-bottom">
             <div class="product-header">
@@ -77,31 +86,31 @@
         <h2 class="trending-title" style="text-align:left;padding-left:4rem;font-size:1rem;">You may also like</h2>
         <div class="product-slider" id="uniqueProductSlider">
             @foreach($products as $product)
-                <div class="product-item">
-                    @php
-                    $firstImage = $product->itemImages->first();
-                    @endphp
+            <div class="product-item">
+                @php
+                $firstImage = $product->itemImages->first();
+                @endphp
 
-                    @if($firstImage)
-                    <a href="{{route('product.details' , $product->id)}}"><img style="height: 86%;width: 100%;"
-                            src="{{ asset('item-images/' . $firstImage->image_name) }}" class="product-image"></a>
-                    @else
-                    <a href="{{route('product.details' , $product->id)}}"><img src="{{asset('default.jfif')}}"
-                            class="product-image"></a>
-                    @endif
-                    <a href="{{route('product.details' , $product->id)}}">
-                        <p class="product-name">{{$product->name}}</p>
-                    </a>
-                    @if($product->item_type == 'for_rental')
-                    <a href="{{route('product.details' , $product->id)}}">
-                        <p class="product-price">{{$product->rental_price}}$</p>
-                    </a>
-                    @else
-                    <a href="{{route('product.details' , $product->id)}}">
-                        <p class="product-price">{{$product->sale_price}}$</p>
-                    </a>
-                    @endif
-                </div>
+                @if($firstImage)
+                <a href="{{route('product.details' , $product->id)}}"><img style="height: 86%;width: 100%;"
+                        src="{{ asset('item-images/' . $firstImage->image_name) }}" class="product-image"></a>
+                @else
+                <a href="{{route('product.details' , $product->id)}}"><img src="{{asset('default.jfif')}}"
+                        class="product-image"></a>
+                @endif
+                <a href="{{route('product.details' , $product->id)}}">
+                    <p class="product-name">{{$product->name}}</p>
+                </a>
+                @if($product->item_type == 'for_rental')
+                <a href="{{route('product.details' , $product->id)}}">
+                    <p class="product-price">{{$product->rental_price}}$</p>
+                </a>
+                @else
+                <a href="{{route('product.details' , $product->id)}}">
+                    <p class="product-price">{{$product->sale_price}}$</p>
+                </a>
+                @endif
+            </div>
             @endforeach
         </div>
         <div class="slider-controls">
@@ -113,6 +122,129 @@
 
 @endsection
 @push('scripts')
+<!-- for add to cart  -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetchCartItems();
+});
+
+function fetchCartItems() {
+    fetch('{{ url("/cart/items") }}', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(cartItems => {
+            const cartItemsContainer = document.querySelector('.cart-items');
+            cartItemsContainer.innerHTML = '';
+
+            cartItems.forEach(item => {
+                let imageUrl = item.product.item_images.length > 0 ?
+                    `{{ asset('item-images/') }}/${item.product.item_images[0].image_name}` :
+                    'default.jfif';
+                let priceHtml = '';
+                if (item.product.item_type === 'for_rent') {
+                    priceHtml = `<p><b>Rent Price Per Day $${item.product.rental_price}</b></p>`;
+                } else {
+                    priceHtml = `<p>Sale Price $${item.product.sale_price}</p>`;
+                }
+
+                const newItem = `
+                    <div class="cart-item" id="cart-item-${item.id}">
+                        <img src="${imageUrl}" alt="Product Image">
+                        <div class="product-details">
+                            <h4>${item.product.name}</h4>
+                            <div class="pricing">
+                                ${priceHtml}
+                            </div>
+                            <p>Size: ${item.product.size}</p>
+                        </div>
+                        <button class="remove-from-cart" data-cart-id="${item.id}">Remove</button>
+                    </div>
+                    <hr>
+                `;
+                cartItemsContainer.innerHTML += newItem;
+            });
+
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    let cartId = this.getAttribute('data-cart-id');
+                    removeCartItem(cartId);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching cart items:', error);
+        });
+}
+
+document.getElementById('add-to-cart').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    let productId = this.getAttribute('data-product-id');
+
+    fetch('{{ route("cart.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                product_id: productId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const successAlert = document.getElementById('alert-success');
+
+            if (data.status === 'added') {
+                successAlert.style.display = 'block';
+                successAlert.style.visibility = 'visible';
+                
+                successAlert.textContent = data.message;
+                successAlert.classList.remove('alert-info');
+                successAlert.classList.add('alert-success');
+                
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 2000);
+            }
+
+            fetchCartItems();
+        })
+        .catch(error => {
+            console.error('Error adding to cart:', error);
+        });
+});
+
+function removeCartItem(cartId) {
+    fetch(`{{ url('cart/remove') }}/${cartId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'removed') {
+                const successAlert = document.getElementById('alert-success');
+                successAlert.textContent = data.message;
+                successAlert.classList.remove('alert-info');
+                successAlert.classList.add('alert-success');
+                successAlert.style.display = 'block';
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 2000);
+                document.getElementById(`cart-item-${cartId}`).remove();
+            }
+        })
+        .catch(error => {
+            console.error('Error removing from cart:', error);
+        });
+}
+</script>
 <script>
 $('#lightSlider').lightSlider({
     gallery: true,

@@ -75,15 +75,15 @@
                 @endphp
 
                 @if($firstImage)
-                    <img src="{{ asset('item-images/' . $firstImage->image_name) }}" style="height: 90%;width: 100%;"class="product-image">
+                    <a href="{{route('product.details' , $item->id)}}"><img src="{{ asset('item-images/' . $firstImage->image_name) }}" style="height: 90%;width: 100%;"class="product-image"></a>
                 @else
-                    <img src="{{asset('default.jfif')}}" style="height: 90%;width: 100%;"class="product-image">
+                    <a href="href="{{route('product.details' , $item->id)}}""><img src="{{asset('default.jfif')}}" style="height: 90%;width: 100%;"class="product-image"></a>
                 @endif
-                <p class="product-name">{{$item->name}}</p>
+                    <a href="{{route('product.details' , $item->id)}}"><p class="product-name">{{$item->name}}</p></a>
                 @if($item->item_type == 'for_rent')
-                    <p class="product-price">{{$item->rental_price}}$</p>
+                    <a href="{{route('product.details' , $item->id)}}"><p class="product-price">{{$item->rental_price}}$</p></a>
                 @else
-                    <p class="product-price">{{$item->sale_price}}$</p>
+                    <a href="{{route('product.details' , $item->id)}}"><p class="product-price">{{$item->sale_price}}$</p></a>
                 @endif
             </div>
             @endforeach

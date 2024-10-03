@@ -8,6 +8,7 @@ use App\Http\Controllers\Seller\PostController;
 use App\Http\Controllers\Buyer\BuyerFrontController;
 use App\Http\Controllers\Buyer\ProductController;
 use App\Http\Controllers\Buyer\CheckoutController;
+use App\Http\Controllers\Buyer\CartController;
 use App\Http\Middleware\CheckUserRole;
 
 
@@ -30,6 +31,9 @@ Route::get('/all-products', [ProductController::class, 'index'])->name('products
 Route::get('/product-details/{id}', [ProductController::class, 'details'])->name('product.details');
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkout');
 
+Route::post('/store-cart', [CartController::class, 'store'])->name('cart.store');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::get('/cart/items', [CartController::class, 'getCartItems']);
 
 
 // admin

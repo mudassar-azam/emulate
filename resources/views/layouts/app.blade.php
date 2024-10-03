@@ -31,6 +31,7 @@
     <script src='https://sachinchoolur.github.io/lightslider/dist/js/lightslider.js'></script>
     <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
