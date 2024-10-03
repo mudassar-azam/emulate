@@ -29,6 +29,12 @@
                 <li><a href="#">Rental</a></li>
                 <li><a href="#">Purchase</a></li>
                 <li><a href="#">About Us</a></li>
+                @auth
+                    @if(auth()->user()->role === 'buyer')
+                        <li><a href="{{ route('buyer.checkout') }}">Check Out</a></li>
+                    @endif
+                @endauth
+
                 <li><i class="fa-solid fa-magnifying-glass"></i></li>
             </ul>
         </nav>
@@ -233,28 +239,6 @@
     </div>
 </div>
 
-<!-- Sidebar for Cart -->
-<div class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header">
-        <button id="closeSidebar" class="close-btn">←</button>
-        <span>Shopping Cart</span>
-    </div>
-
-    <div class="cart-items">
-
-    </div>
-
-    <div class="cart-summary">
-        <hr>
-        <div class="tax">
-            <small>Total ,Taxes, shipping, discounts etc to be entered at checkout</small>
-        </div>
-    </div>
-
-    <!-- Checkout Button -->
-    <button class="checkout-btn" onclick="window.location.href='{{ route('buyer.checkout') }}'">Checkout</button>
-
-</div>
 
 <!-- Sidebar for menu -->
 <div class="menu-sidebar" id="menuSidebar">
@@ -269,91 +253,6 @@
     </nav>
 </div>
 
-<!-- Rent popup -->
-<div id="rent-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Buy</h2>
-            <a href="#">Need help?</a>
-        </div>
-        <div class="sub-container">
-
-            <label for="zip">Delivery ZIP Code</label>
-            <input type="text" id="zip" name="zip" placeholder="Enter ZIP Code">
-
-            <label for="lease-term">Lease Term</label>
-            <div class="lease-term">
-                <button class="active" data-days="1">1 Day</button>
-                <button data-days="2">2 Day</button>
-                <button data-days="3">3 Day</button>
-                <button data-days="4">4 Day</button>
-                <button data-days="5">5 Day</button>
-            </div>
-
-            <label for="date">Date</label>
-            <div class="calendar-header">
-                <div class="calendar-navigation">
-                    <button onclick="prevMonth()"><i class="fa-solid fa-chevron-left"></i></button>
-                    <span id="currentMonth">September 2024</span>
-                    <button onclick="nextMonth()"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-            </div>
-            <!-- Day names row -->
-            <div id="dayNames" class="calendar-day-names">
-                <div>S</div>
-                <div>M</div>
-                <div>T</div>
-                <div>W</div>
-                <div>T</div>
-                <div>F</div>
-                <div>S</div>
-            </div>
-            <div class="calendar-grid" id="calendarGrid">
-                <!-- Calendar days will be dynamically generated -->
-            </div>
-
-            <label for="size">Size</label>
-            <select id="size" name="size">
-                <option value="IT44">IT 44 / US 8</option>
-                <option value="IT46">IT 46 / US 9</option>
-                <option value="IT48">IT 48 / US 10</option>
-            </select>
-
-            <button class="apply-btn" onclick="applyRent()">APPLY</button>
-        </div>
-    </div>
-</div>
-<!-- Buy popup -->
-<div id="buy-popup" class="popup">
-    <div class="container">
-        <div class="d-flex justify-between"
-            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Buy</h2>
-            <a href="#">Need help?</a>
-        </div>
-        <div class="sub-container">
-            <label for="zip">Delivery ZIP Code</label>
-            <input type="text" id="zip" name="zip" placeholder="Enter ZIP Code">
-
-            <label for="size">Size</label>
-            <select id="size" name="size">
-                <option value="IT44">IT 44 / US 8</option>
-                <option value="IT46">IT 46 / US 9</option>
-                <option value="IT48">IT 48 / US 10</option>
-            </select>
-
-            <label for="size">Fre Backup Size</label>
-            <select id="size" name="size">
-                <option value="IT44">IT 44 / US 8</option>
-                <option value="IT46">IT 46 / US 9</option>
-                <option value="IT48">IT 48 / US 10</option>
-            </select>
-
-            <button class="apply-btn" onclick="applyRent()">APPLY</button>
-        </div>
-    </div>
-</div>
 
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

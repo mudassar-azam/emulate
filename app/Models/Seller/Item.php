@@ -18,6 +18,8 @@ class Item extends Model
         'user_id',
         'category_id',
         'item_type',
+        'available_to_buy',
+        'available_to_rent',
     ];
 
     public function itemImages()

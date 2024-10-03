@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Buyer\Cart;
+use App\Models\Buyer\Order;
+use App\Models\Seller\Item;
+
 
 class CartController extends Controller
 {
@@ -20,6 +23,7 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $product_id = $request->product_id;
+        $product = Item::find($product_id);
         $user_id = Auth::user()->id;
     
         $cart = Cart::where('user_id', $user_id)->where('product_id', $product_id)->first();
@@ -27,13 +31,15 @@ class CartController extends Controller
         if ($cart) {
             return response()->json(['status' => 'exists', 'message' => 'Product is already in your cart!']);
         } else {
-            Cart::create([
+            $cart = Cart::create([
                 'user_id' => $user_id,
                 'product_id' => $product_id
             ]);
+            
             $cartItems = Cart::with(['product.itemImages' => function($query) {
                 $query->orderBy('id')->limit(1);
             }])->where('user_id', $user_id)->get();
+            
     
             return response()->json(['status' => 'added', 'message' => 'Product added to cart successfully!', 'cart_items' => $cartItems]);
         }
@@ -45,11 +51,41 @@ class CartController extends Controller
         $cartItem = Cart::where('id', $id)->where('user_id', $user_id)->first();
 
         if ($cartItem) {
+            
             $cartItem->delete();
+
             return response()->json(['status' => 'removed', 'message' => 'Product removed from cart!']);
         }
 
         return response()->json(['status' => 'error', 'message' => 'Item not found in cart!']);
+    }
+
+    public function confirmOrder(){
+        $carts = Cart::where('user_id' , Auth::user()->id)->get();
+
+        if ($carts->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No items present in the cart.']);
+        }
+
+        foreach($carts as $cart){
+            $order = Order::create([
+                'user_id' => Auth::user()->id,
+                'product_id' => $cart->product->id,
+                'product_owner_id' => $cart->product->user_id,
+                'type' => 'cart',
+                'payment_status' => 'due',
+            ]);
+
+            $product = Item::find($cart->product->id);
+            $product->available_to_buy = 0 ;
+            $product->save();
+        }
+
+        foreach($carts as $cart){
+            $cart->delete();
+        }
+
+        return response()->json(['success' => true, 'message' => 'Order Confirmed Successfully!']);
     }
 
 }

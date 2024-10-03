@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('item_type');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id');
+            $table->integer('available_to_rent')->default(1);
+            $table->integer('available_to_buy')->default(1);
             $table->timestamps();
     
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

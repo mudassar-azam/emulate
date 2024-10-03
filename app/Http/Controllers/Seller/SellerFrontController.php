@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Seller\Item;
 use App\Models\Seller\Post;
+use App\Models\Buyer\Order;
 use App\Models\User;
 use App\Models\Category;
 
@@ -29,7 +30,8 @@ class SellerFrontController extends Controller
 
     public function order()
     {
-        return view('seller.orders');
+        $orders = Order::where('product_owner_id' , Auth::user()->id)->get();
+        return view('seller.orders',compact('orders'));
     }
 
     public function showSignupForm(Request $request)

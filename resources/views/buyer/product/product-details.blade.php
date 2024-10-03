@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('content')
 <main class="main">
+    <div id="alert-danger" class="alert alert-danger" style="display: none;">
+        <ul id="error-list"></ul>
+    </div>
     <div id="alert-success" class="alert alert-success" style="display: none;"></div>
     <div class="back-btn">
         <i class="fa-solid fa-arrow-left"></i>
@@ -50,9 +53,17 @@
                 @auth
                 <div class="product-actions">
                     @if($product->item_type == 'for_rent')
-                    <button class="rent-btn" onclick="openPopup('rent')">Rent</button>
+                        @if($product->available_to_rent == 1)
+                            <button class="rent-btn" onclick="openPopup('rent')">Rent</button>
+                        @else    
+                            <button class="rent-btn">Not Available For Rent</button>
+                        @endif    
                     @else
-                    <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
+                        @if($product->available_to_buy == 1)
+                            <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
+                        @else   
+                            <button class="buy-now-btn" >Not Available To Buy</button>
+                        @endif    
                     @endif
                     <form action="{{route('cart.store')}}" method="post">
                         @csrf
@@ -66,10 +77,15 @@
                 @endauth
             </div>
         </div>
-
+        <style>
+        .lSSlideOuter .lSPager.lSGallery img {
+            height: 5em !important;
+        }
+        </style>
         <div class="product-section2">
             @foreach($product->itemImages as $image)
-            <div class="box"><img src="{{ asset('item-images/' . $image->image_name) }}" style="width: 100%;"></div>
+            <div class="box"><img src="{{ asset('item-images/' . $image->image_name) }}"
+                    style="width: 100%;height: 100%;"></div>
             @endforeach
         </div>
         <div class="product-right-details special-bottom">
@@ -120,6 +136,114 @@
     </section>
 </main>
 
+<!-- Rent popup -->
+<div id="rent-popup" class="popup">
+    <div class="container">
+        <div class="d-flex justify-between"
+            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+            <h2>Rent Item</h2>
+            <a href="#">Need help?</a>
+        </div>
+        <div class="sub-container">
+
+            <label for="zip">Delivery ZIP Code</label>
+            <input type="text" class="zip" name="zip" placeholder="Enter ZIP Code">
+
+            <label for="lease-term">Lease Term</label>
+            <div class="lease-term">
+                <button class="active" data-days="1">1 Day</button>
+                <button data-days="2">2 Day</button>
+                <button data-days="3">3 Day</button>
+                <button data-days="4">4 Day</button>
+                <button data-days="5">5 Day</button>
+            </div>
+
+            <label for="date">Date</label>
+            <div class="calendar-header">
+                <div class="calendar-navigation">
+                    <button onclick="prevMonth()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="currentMonth">September 2024</span>
+                    <button onclick="nextMonth()"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <!-- Day names row -->
+            <div id="dayNames" class="calendar-day-names">
+                <div>S</div>
+                <div>M</div>
+                <div>T</div>
+                <div>W</div>
+                <div>T</div>
+                <div>F</div>
+                <div>S</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar days will be dynamically generated -->
+            </div>
+
+            <label for="size">Size</label>
+            <select class="size" name="size">
+                <option disabled>select size</option>
+                <option value="{{$product->size}}">{{$product->size}}</option>
+            </select>
+
+            <button class="apply-btn" onclick="applyRent()">APPLY</button>
+        </div>
+    </div>
+</div>
+
+<!-- Buy popup -->
+<div id="buy-popup" class="popup">
+    <div class="container">
+        <div class="d-flex justify-between"
+            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+            <h2>Buy Now</h2>
+            <a href="#">Need help?</a>
+        </div>
+        <div class="sub-container">
+            <form id="buyNowForm" action="{{route('buyer.order.now')}}" method="post">
+                @csrf
+                <label for="zip">Delivery ZIP Code</label>
+                <input type="text" id="zip" name="zip" placeholder="Enter ZIP Code">
+
+                <label for="size">Size</label>
+                <select id="size" name="size">
+                    <option disabled>select size</option>
+                    <option value="{{$product->size}}">{{$product->size}}</option>
+                </select>
+
+                <input type="hidden" name="product_id" value="{{$product->id}}">
+
+                <button type="submit" class="apply-btn">Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar for Cart -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <button id="closeSidebar" class="close-btn">←</button>
+        <span>Shopping Cart</span>
+    </div>
+
+    <div class="cart-items">
+
+    </div>
+
+    <div class="cart-summary">
+        <hr>
+        <div class="tax">
+            <small>Total ,Taxes, shipping, discounts etc to be entered at checkout</small>
+        </div>
+    </div>
+
+    <form class="confirmOrderForm" action="{{route('buyer.cart.confirm.order')}}" method="post">
+        @csrf
+        <button class="confirmOrderButton checkout-btn" type="button">Confirm Order</button>
+    </form>
+
+</div>
+
 @endsection
 @push('scripts')
 <!-- for add to cart  -->
@@ -152,19 +276,19 @@ function fetchCartItems() {
                 }
 
                 const newItem = `
-                    <div class="cart-item" id="cart-item-${item.id}">
-                        <img src="${imageUrl}" alt="Product Image">
-                        <div class="product-details">
-                            <h4>${item.product.name}</h4>
-                            <div class="pricing">
-                                ${priceHtml}
+                        <div class="cart-item" id="cart-item-${item.id}">
+                            <img src="${imageUrl}" alt="Product Image">
+                            <div class="product-details">
+                                <h4>${item.product.name}</h4>
+                                <div class="pricing">
+                                    ${priceHtml}
+                                </div>
+                                <p>Size: ${item.product.size}</p>
                             </div>
-                            <p>Size: ${item.product.size}</p>
+                            <button class="remove-from-cart" data-cart-id="${item.id}">Remove</button>
                         </div>
-                        <button class="remove-from-cart" data-cart-id="${item.id}">Remove</button>
-                    </div>
-                    <hr>
-                `;
+                        <hr>
+                    `;
                 cartItemsContainer.innerHTML += newItem;
             });
 
@@ -202,11 +326,11 @@ document.getElementById('add-to-cart').addEventListener('click', function(event)
             if (data.status === 'added') {
                 successAlert.style.display = 'block';
                 successAlert.style.visibility = 'visible';
-                
+
                 successAlert.textContent = data.message;
                 successAlert.classList.remove('alert-info');
                 successAlert.classList.add('alert-success');
-                
+
                 setTimeout(function() {
                     successAlert.style.display = 'none';
                 }, 2000);
@@ -246,107 +370,289 @@ function removeCartItem(cartId) {
 }
 </script>
 <script>
-$('#lightSlider').lightSlider({
-    gallery: true,
-    item: 1,
-    loop: true,
-    slideMargin: 0,
-    thumbItem: 6
-});
+    $('#lightSlider').lightSlider({
+        gallery: true,
+        item: 1,
+        loop: true,
+        slideMargin: 0,
+        thumbItem: 6
+    });
 </script>
-<script>
-const months = [
-    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-    'August', 'September', 'October', 'November', 'December'
-];
+ <script>
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'
+    ];
 
-let currentDate = new Date();
-let leaseDays = 1;
-const calendarGrid = document.getElementById('calendarGrid');
-const currentMonth = document.getElementById('currentMonth');
+    let currentDate = new Date();
+    let leaseDays = 1;
+    const calendarGrid = document.getElementById('calendarGrid');
+    const currentMonth = document.getElementById('currentMonth');
 
-// Generate the calendar
-function generateCalendar(year, month) {
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    calendarGrid.innerHTML = '';
+    // Generate the calendar
+    function generateCalendar(year, month) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        calendarGrid.innerHTML = '';
 
-    // Empty days for the first row
-    for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('button');
-        emptyCell.disabled = true;
-        calendarGrid.appendChild(emptyCell);
+        // Empty days for the first row
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement('button');
+            emptyCell.disabled = true;
+            calendarGrid.appendChild(emptyCell);
+        }
+
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayButton = document.createElement('button');
+            dayButton.textContent = day;
+            dayButton.addEventListener('click', () => selectDate(dayButton, day, daysInMonth));
+            calendarGrid.appendChild(dayButton);
+        }
     }
 
-    // Days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayButton = document.createElement('button');
-        dayButton.textContent = day;
-        dayButton.addEventListener('click', () => selectDate(dayButton, day, daysInMonth));
-        calendarGrid.appendChild(dayButton);
-    }
-}
+    // Select a date and highlight the range according to lease term
+    function selectDate(button, startDay, totalDays) {
+        document.querySelectorAll('.calendar-grid button').forEach(btn => btn.classList.remove('range'));
+        button.classList.add('range');
 
-// Select a date and highlight the range according to lease term
-function selectDate(button, startDay, totalDays) {
-    document.querySelectorAll('.calendar-grid button').forEach(btn => btn.classList.remove('range'));
-    button.classList.add('range');
+        for (let i = 1; i < leaseDays; i++) {
+            const nextDay = startDay + i;
+            const dayIndex = [...calendarGrid.children].indexOf(button);
+            const nextIndex = dayIndex + i;
 
-    for (let i = 1; i < leaseDays; i++) {
-        const nextDay = startDay + i;
-        const dayIndex = [...calendarGrid.children].indexOf(button);
-        const nextIndex = dayIndex + i;
-
-        if (nextDay <= totalDays && nextIndex < calendarGrid.children.length) {
-            const nextButton = calendarGrid.children[nextIndex];
-            if (nextButton && !nextButton.disabled) {
-                nextButton.classList.add('range');
+            if (nextDay <= totalDays && nextIndex < calendarGrid.children.length) {
+                const nextButton = calendarGrid.children[nextIndex];
+                if (nextButton && !nextButton.disabled) {
+                    nextButton.classList.add('range');
+                }
             }
         }
     }
-}
 
-// Move to the next month
-function nextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    updateCalendar();
-}
+    // Move to the next month
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        updateCalendar();
+    }
 
-// Move to the previous month
-function prevMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    updateCalendar();
-}
+    // Move to the previous month
+    function prevMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        updateCalendar();
+    }
 
-// Update the calendar display
-function updateCalendar() {
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
-    currentMonth.textContent = `${months[month]} ${year}`;
-    generateCalendar(year, month);
-}
+    // Update the calendar display
+    function updateCalendar() {
+        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear();
+        currentMonth.textContent = `${months[month]} ${year}`;
+        generateCalendar(year, month);
+    }
 
-// Lease term selection
-document.querySelectorAll('.lease-term button').forEach(button => {
-    button.addEventListener('click', () => {
-        document.querySelectorAll('.lease-term button').forEach(btn => btn.classList.remove(
-            'active'));
-        button.classList.add('active');
-        leaseDays = parseInt(button.getAttribute('data-days'));
+    // Lease term selection
+    document.querySelectorAll('.lease-term button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.lease-term button').forEach(btn => btn.classList.remove(
+                'active'));
+            button.classList.add('active');
+            leaseDays = parseInt(button.getAttribute('data-days'));
+        });
     });
+
+    function applyRent() {
+        const zipCode = document.querySelector('.zip').value;
+        const leaseTerm = document.querySelector('.lease-term button.active').textContent;
+        const selectedButton = document.querySelector('.calendar-grid button.range');
+        const size = document.querySelector('.size').value;
+
+        if (!zipCode) {
+            alert('Please enter a ZIP Code.');
+            return;
+        }
+
+        if (!selectedButton) {
+            alert('Please select a date.');
+            return;
+        }
+
+
+        if (!size) {
+            alert('Please select a size.');
+            return;
+        }
+
+        const selectedDate = parseInt(selectedButton.textContent);
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+
+        let startDate = `${selectedDate}/${month}/${year}`;
+        let endDate = startDate;
+
+        if (leaseDays > 1) {
+            let endDay = selectedDate + (leaseDays - 1);
+
+            const daysInMonth = new Date(year, currentDate.getMonth() + 1, 0).getDate();
+            if (endDay > daysInMonth) {
+                const nextMonth = (currentDate.getMonth() + 2) % 12 || 12;
+                const nextYear = nextMonth === 1 ? year + 1 : year;
+                endDay = endDay - daysInMonth;
+                endDate = `${endDay}/${nextMonth}/${nextYear}`;
+            } else {
+                endDate = `${endDay}/${month}/${year}`;
+            }
+        }
+
+        const data = {
+            zip_code: zipCode,
+            lease_term: leaseTerm,
+            start_date: startDate,
+            end_date: endDate,
+            product_id: {
+                {
+                    $product - > id
+                }
+            },
+        };
+
+
+        axios.post('/orders', data)
+            .then(response => {
+                alert('Order created successfully , Proceed to checkout !');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+                alert('Failed to submit the order.');
+            });
+    }
+
+    updateCalendar();
+</script>
+<!-- for buy now  -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var myForm = document.getElementById('buyNowForm');
+        var errorAlert = document.getElementById('alert-danger');
+        var errorList = document.getElementById('error-list');
+        var successAlert = document.getElementById('alert-success');
+        myForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formElements = myForm.querySelectorAll('input, select, textarea');
+            formElements.forEach(function(element) {
+                element.style.border = '';
+                if (element.type === 'file') {
+                    element.classList.remove('file-not-valid');
+                }
+            });
+            var formData = new FormData(myForm);
+            fetch(myForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        errorAlert.style.display = 'none';
+                        successAlert.textContent = data.message;
+                        successAlert.style.display = 'block';
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        setTimeout(function() {
+                            successAlert.style.display = 'none';
+                        }, 4000);
+                        location.reload();
+                    } else {
+                        errorList.innerHTML = '';
+                        if (data.errors.length > 0) {
+                            var li = document.createElement('li');
+                            li.textContent = data.errors[0].message;
+                            errorList.appendChild(li);
+                            errorAlert.style.display = 'block';
+                            successAlert.style.display = 'none';
+                            var firstErrorField;
+                            data.errors.forEach(function(error, index) {
+                                var errorField = myForm.querySelector(
+                                    `[name="${error.field}"]`);
+                                if (errorField) {
+                                    errorField.style.border = '1px solid red';
+                                    if (errorField.type === 'file') {
+                                        errorField.classList.add('file-not-valid');
+                                    }
+                                    if (index === 0) {
+                                        firstErrorField = errorField;
+                                    }
+                                }
+                            });
+
+                            // Focus on the first invalid input field
+                            if (firstErrorField) {
+                                firstErrorField.focus();
+                            }
+                            setTimeout(function() {
+                                errorAlert.style.display = 'none';
+                            }, 3000);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        myForm.addEventListener('input', function(event) {
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+                if (event.target.value.trim() !== '') {
+                    event.target.style.border = '';
+                    if (event.target.type === 'file') {
+                        event.target.classList.remove('file-not-valid');
+                    }
+                }
+            }
+        });
+        myForm.addEventListener('change', function(event) {
+            if (event.target.tagName === 'SELECT') {
+                if (event.target.value.trim() !== '') {
+                    event.target.style.border = '';
+                    if (event.target.type === 'file') {
+                        event.target.classList.remove('file-not-valid');
+                    }
+                }
+            }
+        });
+    });
+</script>
+<!-- to confirm order  -->
+<script>
+document.querySelector('.confirmOrderButton').addEventListener('click', function() {
+    const form = document.querySelector('.confirmOrderForm');
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order confirmed successfully!');
+                location.reload();
+            } else {
+                alert(data.message); 
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while confirming the order.');
+        });
 });
-
-// Handle apply button click
-function applyRent() {
-    const zipCode = document.getElementById('zip').value;
-    const leaseTerm = document.querySelector('.lease-term button.active').textContent;
-    const selectedDate = document.querySelector('.calendar-grid button.range')?.textContent || 'No date selected';
-    const size = document.getElementById('size').value;
-
-    alert(`ZIP Code: ${zipCode}\nLease Term: ${leaseTerm}\nSelected Date: ${selectedDate}\nSize: ${size}`);
-}
-
-// Initialize the calendar
-updateCalendar();
 </script>
 @endpush

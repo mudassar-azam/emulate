@@ -43,6 +43,18 @@ class ItemController extends Controller
 
         $data = $request->all();
 
+        if($request->item_type === 'for_sale'){
+
+            $data['available_to_buy'] = 1;
+            $data['available_to_rent'] = 0;
+
+        }else{
+
+            $data['available_to_buy'] = 0;
+            $data['available_to_rent'] = 1;
+
+        }
+
         $data['user_id'] = Auth::user()->id;
 
         $item = Item::create($data);

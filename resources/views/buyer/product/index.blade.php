@@ -20,7 +20,7 @@
                         @foreach($categories as $category)
                         <li>
                             <label>
-                                {{$category->name}}
+                                <h5 style="flex: 1; margin-left: 0.2em;"> {{$category->name}}</h5>
                                 <input type="checkbox" class="filter-input category" data-filter-name="Category"
                                     data-filter-value="{{$category->id}}" />
                                 <span></span>
@@ -39,7 +39,7 @@
                         @foreach($sellers as $seller)
                         <li>
                             <label>
-                                {{$seller->name}}
+                                <h5 style="flex: 1; margin-left: 0.2em;">{{$seller->name}}</h5>
                                 <input type="checkbox" class="filter-input seller" data-filter-name="Seller"
                                     data-filter-value="{{$seller->id}}" />
                                 <span></span>
@@ -57,7 +57,7 @@
                     <ul>
                         <li>
                             <label>
-                                For Rent
+                                <h5 style="flex: 1; margin-left: 0.2em;">For Rent</h5>
                                 <input type="checkbox" class="filter-input item-type" data-filter-name="Item Type"
                                     data-filter-value="for_rent" />
                                 <span></span>
@@ -65,7 +65,7 @@
                         </li>
                         <li>
                             <label>
-                                For Sale
+                                <h5 style="flex: 1; margin-left: 0.2em;">For Sale</h5>
                                 <input type="checkbox" class="filter-input item-type" data-filter-name="Item Type"
                                     data-filter-value="for_sale" />
                                 <span></span>
@@ -82,7 +82,7 @@
                     <ul>
                         <li>
                             <label>
-                                $0 - $50
+                            <h5 style="flex: 1; margin-left: 0.2em;">$0 - $50</h5>
                                 <input type="checkbox" class="filter-input price" data-filter-name="Price"
                                     data-filter-value="0-50" />
                                 <span></span>
@@ -90,7 +90,7 @@
                         </li>
                         <li>
                             <label>
-                                $51 - $100
+                                <h5 style="flex: 1; margin-left: 0.2em;">$51 - $100</h5>
                                 <input type="checkbox" class="filter-input price" data-filter-name="Price"
                                     data-filter-value="51-100" />
                                 <span></span>
@@ -98,7 +98,7 @@
                         </li>
                         <li>
                             <label>
-                                $101 - $200
+                                <h5 style="flex: 1; margin-left: 0.2em;">$101 - $200</h5>
                                 <input type="checkbox" class="filter-input price" data-filter-name="Price"
                                     data-filter-value="101-200" />
                                 <span></span>
@@ -106,7 +106,7 @@
                         </li>
                         <li>
                             <label>
-                                $201+
+                                <h5 style="flex: 1; margin-left: 0.2em;">$201+</h5>
                                 <input type="checkbox" class="filter-input price" data-filter-name="Price"
                                     data-filter-value="201+" />
                                 <span></span>
@@ -133,7 +133,7 @@
             <div class="product-cards" id="productCards">
                 <div class="product-flex" id="uniqueProductflex">
                     @foreach($products as $product)
-                    <div class="product-item" data-category-id="{{$product->category_id}}" data-seller-id="{{$product->user_id}}" data-item-type="{{$product->item_type}}" data-sale-price="{{$product->sale_price}}" data-rental-price="{{$product->rental_price}}">
+                    <div class="product-item" data-category-id="{{$product->category_id}}" data-seller-id="{{$product->user_id}}" data-item-type="{{$product->item_type}}" data-sale-price="{{$product->sale_price}}" data-rental-price="{{$product->rental_price}}" style="width: 18em;height: 15em;">
                         @php
                         $firstImage = $product->itemImages->first();
                         @endphp

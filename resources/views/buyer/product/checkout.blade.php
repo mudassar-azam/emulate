@@ -32,7 +32,9 @@
                     <input type="text" placeholder="Security code">
                 </div>
 
-                <button class="place-order-btn">PLACE ORDER</button>
+                @if($orders->count() > 0)
+                    <button class="place-order-btn">PLACE ORDER</button>
+                @endif
 
                 <p class="order-terms">
                     By confirming this purchase, I understand this is final sale and accept
@@ -41,68 +43,68 @@
             </form>
         </div>
 
+        @php
+            $total = 0; 
+        @endphp
+
         <!-- Right Section: Your Rentals -->
         <div class="rentals-section">
-            <h2>Your rentals</h2>
+            <h2>Your Items</h2>
             <div class="rental-items-container">
-                <div class="rental-item">
-                    <div class="rental-details">
-                        <img src="{{asset('default.jfif')}}" alt="Product Image">
-                        <div class="rental-description">
-                            <p>Item for Max Duggal</p>
-                            <p>Bubble Cocktail Minidress</p>
-                            <p>Size 2</p>
-                        </div>
-                    </div>
-                    <div class="rental-action">
-                        <p class="rental-price">$65.00</p>
-                        <span class="remove-item">🗑️</span>
-                    </div>
-                </div>
+                @foreach($orders as $order)
+                    <div class="rental-item">
+                        <div class="rental-details">
+                            @php
+                                $firstImage = $order->product->itemImages->first();
+                            @endphp
 
-                <div class="rental-item">
-                    <div class="rental-details">
-                        <img src="{{asset('default.jfif')}}" alt="Product Image">
-                        <div class="rental-description">
-                            <p>Item for Max Duggal</p>
-                            <p>Bubble Cocktail Minidress</p>
-                            <p>Size 0</p>
+                            @if($firstImage)
+                            <img src="{{ asset('item-images/' . $firstImage->image_name) }}">
+                            @else
+                            <img src="{{asset('default.jfif')}}" alt="Product Image">
+                            @endif
+
+                            <div class="rental-description">
+                                <p>{{$order->product->name}}</p>
+                                <p>{{$order->product->size}}</p>
+                            </div>
+                        </div>
+                        <div class="rental-action">
+                            @if($order->type == 'rent')
+                                @php
+                                    preg_match('/\d+/', $order->lease_term, $matches);
+                                    $lease_days = (int) $matches[0];
+                                    $calculated_price = $lease_days * $order->product->sale_price;
+                                    $total += $calculated_price;
+                                @endphp
+                                    <p class="rental-price">${{ number_format($calculated_price, 2) }}</p>
+                            @else
+                                    @php
+                                        $total += $order->product->sale_price;
+                                    @endphp
+                                    <p class="rental-price">${{ $order->product->sale_price }}</p>
+                            @endif
+
+
+                            <span data-id="{{ $order->id }}"  class="remove-item delete-order">🗑️</span>
                         </div>
                     </div>
-                    <div class="rental-action">
-                        <p class="rental-price">FREE</p>
-                        <span class="remove-item">🗑️</span>
-                    </div>
-                </div>
-                
-                <div class="rental-item">
-                    <div class="rental-details">
-                        <img src="{{asset('default.jfif')}}" alt="Product Image">
-                        <div class="rental-description">
-                            <p>Item for Max Duggal</p>
-                            <p>Bubble Cocktail Minidress</p>
-                            <p>Size 0</p>
-                        </div>
-                    </div>
-                    <div class="rental-action">
-                        <p class="rental-price">FREE</p>
-                        <span class="remove-item">🗑️</span>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
-            <div class="promo-code">
-                <input type="text" placeholder="Promo Code">
-                <button class="apply-btn">APPLY</button>
-            </div>
+            @if($orders->count() > 0)
+                <div class="promo-code">
+                    <input type="text" placeholder="Promo Code">
+                    <button class="apply-btn">APPLY</button>
+                </div>
+            @endif
 
             <div class="pricing-summary">
-                <p>Subtotal: <span>$65.00</span></p>
-                <p>Rental Coverage: <span>$5.00</span></p>
-                <p>Shipping: <span>$9.95</span></p>
-                <p>Tax: <span>$0.88</span></p>
+                <p>Subtotal: <span>${{$total}}</span></p>
+                <p>Shipping: <span>$0</span></p>
+                <p>Tax: <span>$0</span></p>
                 <hr>
-                <p class="total-price">Total: <span>$80.83</span></p>
+                <p class="total-price">Total: <span>${{$total}}</span></p>
             </div>
         </div>
     </div>
@@ -110,5 +112,27 @@
 </main>
 @endsection
 @push('scripts')
-
+<script>
+    $(document).ready(function() {
+        $('.delete-order').click(function() {
+            var orderId = $(this).data('id');
+            if (confirm('Are you sure you want to delete this order?')) {
+                $.ajax({
+                    url: '/destroyOrder/' + orderId,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        alert('Order deleted successfully');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>
 @endpush

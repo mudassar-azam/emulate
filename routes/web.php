@@ -11,6 +11,7 @@ use App\Http\Controllers\Buyer\BuyerFrontController;
 use App\Http\Controllers\Buyer\ProductController;
 use App\Http\Controllers\Buyer\CheckoutController;
 use App\Http\Controllers\Buyer\CartController;
+use App\Http\Controllers\Buyer\OrderController;
 use App\Http\Middleware\CheckUserRole;
 
 // auth 
@@ -25,7 +26,6 @@ Route::group(['middleware' => CheckUserRole::class], function () {
     Route::post('/store-item', [ItemController::class, 'store'])->name('item.store');
     Route::post('/store-post', [PostController::class, 'store'])->name('post.store');
     Route::post('/update-seller-settings', [SellerSettingsController::class, 'update'])->name('update.seller.settings');
-
     Route::get('/orders', [SellerFrontController::class, 'order'])->name('seller.orders');
 });
 
@@ -35,10 +35,13 @@ Route::get('/', [BuyerFrontController::class, 'index'])->name('buyer.front');
 Route::get('/all-products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product-details/{id}', [ProductController::class, 'details'])->name('product.details');
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkout');
-
 Route::post('/store-cart', [CartController::class, 'store'])->name('cart.store');
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/items', [CartController::class, 'getCartItems']);
+Route::post('/cart/confirm/order', [CartController::class, 'confirmOrder'])->name('buyer.cart.confirm.order');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::post('/order-now', [OrderController::class, 'buyNow'])->name('buyer.order.now');
+Route::delete('/destroyOrder/{id}', [OrderController::class, 'destroyOrder'])->name('order.destroy');
 
 
 // admin
