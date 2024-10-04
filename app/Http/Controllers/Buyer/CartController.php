@@ -74,6 +74,7 @@ class CartController extends Controller
                 'product_owner_id' => $cart->product->user_id,
                 'type' => 'cart',
                 'payment_status' => 'due',
+                'total_payment' => $cart->product->sale_price,
             ]);
 
             $product = Item::find($cart->product->id);

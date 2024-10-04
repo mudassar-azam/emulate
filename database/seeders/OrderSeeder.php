@@ -21,6 +21,7 @@ class OrderSeeder extends Seeder
                 'start_date' => null,
                 'end_date' => null,
                 'type' => 'cart',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
             [
@@ -32,6 +33,7 @@ class OrderSeeder extends Seeder
                 'start_date' => null,
                 'end_date' => null,
                 'type' => 'cart',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
             [
@@ -43,6 +45,7 @@ class OrderSeeder extends Seeder
                 'start_date' => '2024-01-01',
                 'end_date' => '2024-02-01',
                 'type' => 'rent',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
             [
@@ -54,6 +57,7 @@ class OrderSeeder extends Seeder
                 'start_date' => '2024-01-01',
                 'end_date' => '2024-07-01',
                 'type' => 'rent',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
             [
@@ -65,6 +69,7 @@ class OrderSeeder extends Seeder
                 'start_date' => null,
                 'end_date' => null,
                 'type' => 'buy',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
             [
@@ -76,6 +81,7 @@ class OrderSeeder extends Seeder
                 'start_date' => null,
                 'end_date' => null,
                 'type' => 'buy',
+                'total_payment' => '100',
                 'payment_status' => 'due',
             ],
         ];

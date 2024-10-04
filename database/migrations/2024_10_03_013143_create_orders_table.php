@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('start_date')->nullable(); 
             $table->string('end_date')->nullable();   
             $table->string('type');
+            $table->string('total_payment');
             $table->string('payment_status');
             $table->timestamps();
         });

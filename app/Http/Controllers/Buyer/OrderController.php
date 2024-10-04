@@ -13,6 +13,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
+            
             $validatedData = $request->validate([
                 'zip_code' => 'required|string|max:10',
                 'lease_term' => 'required|string',
@@ -23,6 +24,11 @@ class OrderController extends Controller
 
             $product = Item::find($validatedData['product_id']);
 
+            if (preg_match('/\d+/', $validatedData['lease_term'], $matches)) {
+                $lease_days = (int) $matches[0]; 
+                $calculated_price = $lease_days * $product->rental_price; 
+            }
+
             $order = Order::create([
                 'user_id' => auth()->id(), 
                 'product_id' => $validatedData['product_id'],
@@ -32,6 +38,7 @@ class OrderController extends Controller
                 'start_date' => $validatedData['start_date'], 
                 'end_date' => $validatedData['end_date'],
                 'type' => 'rent',
+                'total_payment' => $calculated_price,
                 'payment_status' => 'due',
             ]);
 
@@ -75,6 +82,7 @@ class OrderController extends Controller
         $data['product_owner_id'] = $product->id;
         $data['type'] = 'buy';
         $data['payment_status'] = 'due';
+        $data['total_payment'] = $product->sale_price;
 
         $product->available_to_buy = 0 ;
         $product->save();

@@ -14,7 +14,7 @@
                 <div class="card">
                     <div class="demo">
                         <ul id="lightSlider">
-                            @foreach($product->itemImages as $image)
+                            @foreach($item->itemImages as $image)
                             <li data-thumb="{{ asset('item-images/' . $image->image_name) }}">
                                 <img src="{{ asset('item-images/' . $image->image_name) }}" />
                             </li>
@@ -26,49 +26,49 @@
             <!-- Right: Product Details -->
             <div class="product-right-details" style="gap: 3.5em;">
                 <div class="product-header">
-                    @if($product->user->settings && $product->user->settings->profile)
-                    <img src="{{ asset('sellers-profiles/' . $product->user->settings->profile) }}" alt="Profile Image"
+                    @if($item->user->settings && $item->user->settings->profile)
+                    <img src="{{ asset('sellers-profiles/' . $item->user->settings->profile) }}" alt="Profile Image"
                         class="profile-img">
                     @else
                     <img src="{{asset('default.jfif')}}" alt="Profile Image" class="profile-img">
                     @endif
-                    <span class="seller-name">{{$product->user->name}}</span>
+                    <span class="seller-name">{{$item->user->name}}</span>
                 </div>
                 <div class="d-flex justify-between align-center">
-                    <h2>{{$product->name}}</h2>
+                    <h2>{{$item->name}}</h2>
                     <i class="fa-regular fa-heart"></i>
                 </div>
 
                 <div>
-                    <div>Size: <span>{{$product->size}}</span></div>
+                    <div>Size: <span>{{$item->size}}</span></div>
                 </div>
 
                 <div class="product-pricing">
-                    @if($product->item_type == 'for_rent')
-                    <p><strong>Rent Price Per Day : {{$product->rental_price}}$</strong></p>
+                    @if($item->item_type == 'for_rent')
+                    <p><strong>Rent Price Per Day : {{$item->rental_price}}$</strong></p>
                     @else
-                    <p class="retail">Sale Price : {{$product->sale_price}}$</p>
+                    <p class="retail">Sale Price : {{$item->sale_price}}$</p>
                     @endif
                 </div>
                 @auth
                 <div class="product-actions">
-                    @if($product->item_type == 'for_rent')
-                        @if($product->available_to_rent == 1)
+                    @if($item->item_type == 'for_rent')
+                        @if($item->available_to_rent == 1)
                             <button class="rent-btn" onclick="openPopup('rent')">Rent</button>
-                        @else    
+                        @else
                             <button class="rent-btn">Not Available For Rent</button>
-                        @endif    
+                        @endif
                     @else
-                        @if($product->available_to_buy == 1)
-                            <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
-                        @else   
-                            <button class="buy-now-btn" >Not Available To Buy</button>
-                        @endif    
+                    @if($item->available_to_buy == 1)
+                    <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
+                    @else
+                    <button class="buy-now-btn">Not Available To Buy</button>
+                    @endif
                     @endif
                     <form action="{{route('cart.store')}}" method="post">
                         @csrf
-                        <input type="hidden" name="ptoduct_id" value="{{$product->id}}">
-                        <button id="add-to-cart" data-product-id="{{ $product->id }}" style="width: 100%;"
+                        <input type="hidden" name="ptoduct_id" value="{{$item->id}}">
+                        <button id="add-to-cart" data-product-id="{{ $item->id }}" style="width: 100%;"
                             class="rent-btn">Add To Cart</button>
                     </form>
                 </div>
@@ -83,7 +83,7 @@
         }
         </style>
         <div class="product-section2">
-            @foreach($product->itemImages as $image)
+            @foreach($item->itemImages as $image)
             <div class="box"><img src="{{ asset('item-images/' . $image->image_name) }}"
                     style="width: 100%;height: 100%;"></div>
             @endforeach
@@ -94,7 +94,7 @@
             </div>
 
             <div class="product-sizes">
-                <div>Size: <span>{{$product->size}}</span></div>
+                <div>Size: <span>{{$item->size}}</span></div>
             </div>
         </div>
     </div>
@@ -208,10 +208,10 @@
                 <label for="size">Size</label>
                 <select id="size" name="size">
                     <option disabled>select size</option>
-                    <option value="{{$product->size}}">{{$product->size}}</option>
+                    <option value="{{$item->size}}">{{$item->size}}</option>
                 </select>
 
-                <input type="hidden" name="product_id" value="{{$product->id}}">
+                <input type="hidden" name="product_id" value="{{$item->id}}">
 
                 <button type="submit" class="apply-btn">Order</button>
             </form>
@@ -370,15 +370,15 @@ function removeCartItem(cartId) {
 }
 </script>
 <script>
-    $('#lightSlider').lightSlider({
-        gallery: true,
-        item: 1,
-        loop: true,
-        slideMargin: 0,
-        thumbItem: 6
-    });
+$('#lightSlider').lightSlider({
+    gallery: true,
+    item: 1,
+    loop: true,
+    slideMargin: 0,
+    thumbItem: 6
+});
 </script>
- <script>
+<script>
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June', 'July',
         'August', 'September', 'October', 'November', 'December'
@@ -508,11 +508,7 @@ function removeCartItem(cartId) {
             lease_term: leaseTerm,
             start_date: startDate,
             end_date: endDate,
-            product_id: {
-                {
-                    $product - > id
-                }
-            },
+            product_id: {{ $item->id }},
         };
 
 
@@ -529,103 +525,104 @@ function removeCartItem(cartId) {
 
     updateCalendar();
 </script>
+
 <!-- for buy now  -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var myForm = document.getElementById('buyNowForm');
-        var errorAlert = document.getElementById('alert-danger');
-        var errorList = document.getElementById('error-list');
-        var successAlert = document.getElementById('alert-success');
-        myForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formElements = myForm.querySelectorAll('input, select, textarea');
-            formElements.forEach(function(element) {
-                element.style.border = '';
-                if (element.type === 'file') {
-                    element.classList.remove('file-not-valid');
+document.addEventListener('DOMContentLoaded', function() {
+    var myForm = document.getElementById('buyNowForm');
+    var errorAlert = document.getElementById('alert-danger');
+    var errorList = document.getElementById('error-list');
+    var successAlert = document.getElementById('alert-success');
+    myForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formElements = myForm.querySelectorAll('input, select, textarea');
+        formElements.forEach(function(element) {
+            element.style.border = '';
+            if (element.type === 'file') {
+                element.classList.remove('file-not-valid');
+            }
+        });
+        var formData = new FormData(myForm);
+        fetch(myForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
                 }
-            });
-            var formData = new FormData(myForm);
-            fetch(myForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        errorAlert.style.display = 'none';
-                        successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        setTimeout(function() {
-                            successAlert.style.display = 'none';
-                        }, 4000);
-                        location.reload();
-                    } else {
-                        errorList.innerHTML = '';
-                        if (data.errors.length > 0) {
-                            var li = document.createElement('li');
-                            li.textContent = data.errors[0].message;
-                            errorList.appendChild(li);
-                            errorAlert.style.display = 'block';
-                            successAlert.style.display = 'none';
-                            var firstErrorField;
-                            data.errors.forEach(function(error, index) {
-                                var errorField = myForm.querySelector(
-                                    `[name="${error.field}"]`);
-                                if (errorField) {
-                                    errorField.style.border = '1px solid red';
-                                    if (errorField.type === 'file') {
-                                        errorField.classList.add('file-not-valid');
-                                    }
-                                    if (index === 0) {
-                                        firstErrorField = errorField;
-                                    }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    errorAlert.style.display = 'none';
+                    successAlert.textContent = data.message;
+                    successAlert.style.display = 'block';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 4000);
+                    location.reload();
+                } else {
+                    errorList.innerHTML = '';
+                    if (data.errors.length > 0) {
+                        var li = document.createElement('li');
+                        li.textContent = data.errors[0].message;
+                        errorList.appendChild(li);
+                        errorAlert.style.display = 'block';
+                        successAlert.style.display = 'none';
+                        var firstErrorField;
+                        data.errors.forEach(function(error, index) {
+                            var errorField = myForm.querySelector(
+                                `[name="${error.field}"]`);
+                            if (errorField) {
+                                errorField.style.border = '1px solid red';
+                                if (errorField.type === 'file') {
+                                    errorField.classList.add('file-not-valid');
                                 }
-                            });
-
-                            // Focus on the first invalid input field
-                            if (firstErrorField) {
-                                firstErrorField.focus();
+                                if (index === 0) {
+                                    firstErrorField = errorField;
+                                }
                             }
-                            setTimeout(function() {
-                                errorAlert.style.display = 'none';
-                            }, 3000);
+                        });
+
+                        // Focus on the first invalid input field
+                        if (firstErrorField) {
+                            firstErrorField.focus();
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-        myForm.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
+                        setTimeout(function() {
+                            errorAlert.style.display = 'none';
+                        }, 3000);
                     }
                 }
-            }
-        });
-        myForm.addEventListener('change', function(event) {
-            if (event.target.tagName === 'SELECT') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
+    myForm.addEventListener('input', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+    myForm.addEventListener('change', function(event) {
+        if (event.target.tagName === 'SELECT') {
+            if (event.target.value.trim() !== '') {
+                event.target.style.border = '';
+                if (event.target.type === 'file') {
+                    event.target.classList.remove('file-not-valid');
+                }
+            }
+        }
+    });
+});
 </script>
 <!-- to confirm order  -->
 <script>
@@ -646,7 +643,7 @@ document.querySelector('.confirmOrderButton').addEventListener('click', function
                 alert('Order confirmed successfully!');
                 location.reload();
             } else {
-                alert(data.message); 
+                alert(data.message);
             }
         })
         .catch(error => {

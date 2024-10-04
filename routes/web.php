@@ -13,6 +13,18 @@ use App\Http\Controllers\Buyer\CheckoutController;
 use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Buyer\OrderController;
 use App\Http\Middleware\CheckUserRole;
+use App\Http\Controllers\StripeController;
+use App\Models\Buyer\Order;
+
+Route::get('/stripe-blade', function () {
+    $orders = Order::all();
+    return view('stripe',compact('orders')); 
+});
+
+Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
+Route::get('/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+Route::get('/new-card/{token}', [StripeController::class, 'handlePayment'])->name('stripe.newcard');
+Route::post('/new-card', [StripeController::class, 'store']);
 
 // auth 
 Auth::routes();

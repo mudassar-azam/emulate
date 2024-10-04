@@ -22,7 +22,8 @@ class Order extends Model
         'end_date',
         'type',
         'product_owner_id',
-        'payment_status'
+        'payment_status',
+        'total_payment'
     ];
 
     public function user()

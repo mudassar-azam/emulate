@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="{{asset('assets/css/orderDetail.css')}}" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel='stylesheet' href='https://sachinchoolur.github.io/lightslider/dist/css/lightslider.css'>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -29,19 +29,25 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
     <script src='https://sachinchoolur.github.io/lightslider/dist/js/lightslider.js'></script>
-    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
+    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'>
+    </script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 </head>
 
 <body>
-@include('partial.header')
+    @include('partial.header')
 
-@yield('content')
-@stack('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+    @yield('content')
+    @stack('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
     var ctx = document.getElementById('radar_chart').getContext('2d');
     var radarChart = new Chart(ctx, {
         type: 'radar',
@@ -57,15 +63,17 @@
         },
         options: {
             scale: {
-                ticks: { beginAtZero: true }
+                ticks: {
+                    beginAtZero: true
+                }
             }
         }
     });
-</script>
+    </script>
 
-<div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay"></div>
 
-<script src="{{asset('assets/js/script.js')}}"></script>
+    <script src="{{asset('assets/js/script.js')}}"></script>
 </body>
 
 </html>

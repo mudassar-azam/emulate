@@ -14,7 +14,8 @@
             <div class="order-item">
                 <div class="order-details">
                     @php
-                    $firstImage = $order->product->itemImages->first();
+                        $firstImage = $order->product->itemImages->first();
+                        $total = $total + $order->total_payment;
                     @endphp
 
                     @if($firstImage)
@@ -28,16 +29,7 @@
                     </div>
                 </div>
                 <div class="order-status">
-                    @if($order->type == 'rent')
-                        @php
-                            preg_match('/\d+/', $order->lease_term, $matches);
-                            $lease_days = (int) $matches[0];
-                            $calculated_price = $lease_days * $order->product->sale_price;
-                        @endphp
-                         <p class="price">${{ number_format($calculated_price, 2) }}</p>
-                    @else
-                        <p class="price">${{ $order->product->sale_price }}</p>
-                    @endif
+                    <p class="price">${{ $order->total_payment }}</p>
                     <select class="status-select">
                         <option>IN TRANSIT</option>
                         <option>WAIT</option>
