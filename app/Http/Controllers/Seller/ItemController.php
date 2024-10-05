@@ -17,16 +17,13 @@ class ItemController extends Controller
             'name' => 'required',
             'category_id' => 'required',
             'item_type' => 'required',
+            'rental_price' => 'required',
+            'sale_price' => 'required',
             'size' => 'required',
             'images' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'image',
         ];
         
-        if ($request->item_type === 'for_sale') {
-            $rules['sale_price'] = 'required|numeric';
-        } elseif ($request->item_type === 'for_rent') {
-            $rules['rental_price'] = 'required|numeric';
-        }
         
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {

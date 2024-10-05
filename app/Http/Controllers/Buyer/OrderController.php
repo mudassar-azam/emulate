@@ -76,10 +76,11 @@ class OrderController extends Controller
 
         $product = Item::find($request->input('product_id'));
 
+
         $data = $request->all();
         $data['user_id'] = Auth::user()->id;
         $data['product_id'] = $request->input('product_id');
-        $data['product_owner_id'] = $product->id;
+        $data['product_owner_id'] = $product->user_id;
         $data['type'] = 'buy';
         $data['payment_status'] = 'due';
         $data['total_payment'] = $product->sale_price;

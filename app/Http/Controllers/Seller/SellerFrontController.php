@@ -15,9 +15,17 @@ class SellerFrontController extends Controller
 {
     public function index(){
 
-        $user = Auth::check() ? User::find(Auth::user()->id) : null;
-        $items = Item::all();
-        $posts = Post::all();
+        $user = Auth::user();
+
+        if($user->role == 'admin'){
+            $items = Item::all();
+            $posts = Post::all();
+
+        }else{
+            $items = Item::where('user_id' , Auth::user()->id)->get();
+            $posts = Post::where('user_id' , Auth::user()->id)->get();
+        }
+        
         $categories = Category::all();
         return view('seller.index',compact('user','items','categories','posts'));
 

@@ -116,7 +116,7 @@
             <h3>Seller Sign Up</h3>
         </div>
         <div class="popup-form-container">
-            <form class="popup-form" method="POST" action="{{ route('register') }}">
+            <form class="popup-form seller-register-form" method="POST" action="{{ route('register') }}">
                 @csrf
                 <input type="hidden" name="role" value="seller">
                 <label for="email">{{ __('Email Address') }}</label>
@@ -442,5 +442,49 @@
         .catch(error => {
             console.error('Error:', error);
         });
+    });
+</script>
+<script>
+    document.querySelector('.seller-register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const emailError = document.querySelector('.email-error');
+        const nameError = document.querySelector('.name-error');
+        const passwordError = document.querySelector('.password-error');
+
+        console.log(formData);
+
+        emailError.textContent = '';
+        nameError.textContent = '';
+        passwordError.textContent = '';
+
+        fetch('{{ route('register') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else if (data.errors) { 
+                    if (data.errors.email) {
+                        emailError.textContent = data.errors.email[0];
+                    }
+                    if (data.errors.name) {
+                        nameError.textContent = data.errors.name[0];
+                    }
+                    if (data.errors.password) {
+                        passwordError.textContent = data.errors.password[0];
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 </script>

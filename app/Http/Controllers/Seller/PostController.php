@@ -16,7 +16,7 @@ class PostController extends Controller
         $rules = [
             'post' => 'required',
             'images' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'image',
             'item_id' => 'required',
         ];
         

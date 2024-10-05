@@ -59,18 +59,20 @@
                             <button class="rent-btn">Not Available For Rent</button>
                         @endif
                     @else
-                    @if($item->available_to_buy == 1)
-                    <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
-                    @else
-                    <button class="buy-now-btn">Not Available To Buy</button>
+                        @if($item->available_to_buy == 1)
+                            <button class="buy-now-btn" onclick="openPopup('buy')">Buy Now</button>
+                        @else
+                            <button class="buy-now-btn">Not Available To Buy</button>
+                        @endif
                     @endif
+                    @if($item->available_to_rent == 1 && $item->available_to_buy == 1)
+                        <form action="{{route('cart.store')}}" method="post">
+                            @csrf
+                            <input type="hidden" name="ptoduct_id" value="{{$item->id}}">
+                            <button id="add-to-cart" data-product-id="{{ $item->id }}" style="width: 100%;"
+                                class="rent-btn">Add To Cart</button>
+                        </form>
                     @endif
-                    <form action="{{route('cart.store')}}" method="post">
-                        @csrf
-                        <input type="hidden" name="ptoduct_id" value="{{$item->id}}">
-                        <button id="add-to-cart" data-product-id="{{ $item->id }}" style="width: 100%;"
-                            class="rent-btn">Add To Cart</button>
-                    </form>
                 </div>
                 @else
                 <h3>Login ! To Rent Or Buy Item </h3>
@@ -246,137 +248,139 @@
 
 @endsection
 @push('scripts')
+
 <!-- for add to cart  -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    fetchCartItems();
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCartItems();
+    });
 
-function fetchCartItems() {
-    fetch('{{ url("/cart/items") }}', {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(response => response.json())
-        .then(cartItems => {
-            const cartItemsContainer = document.querySelector('.cart-items');
-            cartItemsContainer.innerHTML = '';
+    function fetchCartItems() {
+        fetch('{{ url("/cart/items") }}', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(cartItems => {
+                const cartItemsContainer = document.querySelector('.cart-items');
+                cartItemsContainer.innerHTML = '';
 
-            cartItems.forEach(item => {
-                let imageUrl = item.product.item_images.length > 0 ?
-                    `{{ asset('item-images/') }}/${item.product.item_images[0].image_name}` :
-                    'default.jfif';
-                let priceHtml = '';
-                if (item.product.item_type === 'for_rent') {
-                    priceHtml = `<p><b>Rent Price Per Day $${item.product.rental_price}</b></p>`;
-                } else {
-                    priceHtml = `<p>Sale Price $${item.product.sale_price}</p>`;
+                cartItems.forEach(item => {
+                    let imageUrl = item.product.item_images.length > 0 ?
+                        `{{ asset('item-images/') }}/${item.product.item_images[0].image_name}` :
+                        'default.jfif';
+                    let priceHtml = '';
+                    if (item.product.item_type === 'for_rent') {
+                        priceHtml = `<p><b>Rent Price Per Day $${item.product.rental_price}</b></p>`;
+                    } else {
+                        priceHtml = `<p>Sale Price $${item.product.sale_price}</p>`;
+                    }
+
+                    const newItem = `
+                            <div class="cart-item" id="cart-item-${item.id}">
+                                <img src="${imageUrl}" alt="Product Image">
+                                <div class="product-details">
+                                    <h4>${item.product.name}</h4>
+                                    <div class="pricing">
+                                        ${priceHtml}
+                                    </div>
+                                    <p>Size: ${item.product.size}</p>
+                                </div>
+                                <button class="remove-from-cart" data-cart-id="${item.id}">Remove</button>
+                            </div>
+                            <hr>
+                        `;
+                    cartItemsContainer.innerHTML += newItem;
+                });
+
+                document.querySelectorAll('.remove-from-cart').forEach(button => {
+                    button.addEventListener('click', function() {
+                        let cartId = this.getAttribute('data-cart-id');
+                        removeCartItem(cartId);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching cart items:', error);
+            });
+    }
+
+    document.getElementById('add-to-cart').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        let productId = this.getAttribute('data-product-id');
+
+        fetch('{{ route("cart.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const successAlert = document.getElementById('alert-success');
+
+                if (data.status === 'added') {
+                    successAlert.style.display = 'block';
+                    successAlert.style.visibility = 'visible';
+
+                    successAlert.textContent = data.message;
+                    successAlert.classList.remove('alert-info');
+                    successAlert.classList.add('alert-success');
+
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 2000);
                 }
 
-                const newItem = `
-                        <div class="cart-item" id="cart-item-${item.id}">
-                            <img src="${imageUrl}" alt="Product Image">
-                            <div class="product-details">
-                                <h4>${item.product.name}</h4>
-                                <div class="pricing">
-                                    ${priceHtml}
-                                </div>
-                                <p>Size: ${item.product.size}</p>
-                            </div>
-                            <button class="remove-from-cart" data-cart-id="${item.id}">Remove</button>
-                        </div>
-                        <hr>
-                    `;
-                cartItemsContainer.innerHTML += newItem;
-            });
-
-            document.querySelectorAll('.remove-from-cart').forEach(button => {
-                button.addEventListener('click', function() {
-                    let cartId = this.getAttribute('data-cart-id');
-                    removeCartItem(cartId);
-                });
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching cart items:', error);
-        });
-}
-
-document.getElementById('add-to-cart').addEventListener('click', function(event) {
-    event.preventDefault();
-
-    let productId = this.getAttribute('data-product-id');
-
-    fetch('{{ route("cart.store") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                product_id: productId
+                fetchCartItems();
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const successAlert = document.getElementById('alert-success');
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+            });
+    });
 
-            if (data.status === 'added') {
-                successAlert.style.display = 'block';
-                successAlert.style.visibility = 'visible';
-
-                successAlert.textContent = data.message;
-                successAlert.classList.remove('alert-info');
-                successAlert.classList.add('alert-success');
-
-                setTimeout(function() {
-                    successAlert.style.display = 'none';
-                }, 2000);
-            }
-
-            fetchCartItems();
-        })
-        .catch(error => {
-            console.error('Error adding to cart:', error);
-        });
-});
-
-function removeCartItem(cartId) {
-    fetch(`{{ url('cart/remove') }}/${cartId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'removed') {
-                const successAlert = document.getElementById('alert-success');
-                successAlert.textContent = data.message;
-                successAlert.classList.remove('alert-info');
-                successAlert.classList.add('alert-success');
-                successAlert.style.display = 'block';
-                setTimeout(function() {
-                    successAlert.style.display = 'none';
-                }, 2000);
-                document.getElementById(`cart-item-${cartId}`).remove();
-            }
-        })
-        .catch(error => {
-            console.error('Error removing from cart:', error);
-        });
-}
+    function removeCartItem(cartId) {
+        fetch(`{{ url('cart/remove') }}/${cartId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'removed') {
+                    const successAlert = document.getElementById('alert-success');
+                    successAlert.textContent = data.message;
+                    successAlert.classList.remove('alert-info');
+                    successAlert.classList.add('alert-success');
+                    successAlert.style.display = 'block';
+                    setTimeout(function() {
+                        successAlert.style.display = 'none';
+                    }, 2000);
+                    document.getElementById(`cart-item-${cartId}`).remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error removing from cart:', error);
+            });
+    }
 </script>
+<script src='https://sachinchoolur.github.io/lightslider/dist/js/lightslider.js'></script>
 <script>
-$('#lightSlider').lightSlider({
-    gallery: true,
-    item: 1,
-    loop: true,
-    slideMargin: 0,
-    thumbItem: 6
-});
+    $('#lightSlider').lightSlider({
+        gallery: true,
+        item: 1,
+        loop: true,
+        slideMargin: 0,
+        thumbItem: 6
+    });
 </script>
 <script>
     const months = [
@@ -528,128 +532,128 @@ $('#lightSlider').lightSlider({
 
 <!-- for buy now  -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var myForm = document.getElementById('buyNowForm');
-    var errorAlert = document.getElementById('alert-danger');
-    var errorList = document.getElementById('error-list');
-    var successAlert = document.getElementById('alert-success');
-    myForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        var formElements = myForm.querySelectorAll('input, select, textarea');
-        formElements.forEach(function(element) {
-            element.style.border = '';
-            if (element.type === 'file') {
-                element.classList.remove('file-not-valid');
+    document.addEventListener('DOMContentLoaded', function() {
+        var myForm = document.getElementById('buyNowForm');
+        var errorAlert = document.getElementById('alert-danger');
+        var errorList = document.getElementById('error-list');
+        var successAlert = document.getElementById('alert-success');
+        myForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formElements = myForm.querySelectorAll('input, select, textarea');
+            formElements.forEach(function(element) {
+                element.style.border = '';
+                if (element.type === 'file') {
+                    element.classList.remove('file-not-valid');
+                }
+            });
+            var formData = new FormData(myForm);
+            fetch(myForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        errorAlert.style.display = 'none';
+                        successAlert.textContent = data.message;
+                        successAlert.style.display = 'block';
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        setTimeout(function() {
+                            successAlert.style.display = 'none';
+                        }, 4000);
+                        location.reload();
+                    } else {
+                        errorList.innerHTML = '';
+                        if (data.errors.length > 0) {
+                            var li = document.createElement('li');
+                            li.textContent = data.errors[0].message;
+                            errorList.appendChild(li);
+                            errorAlert.style.display = 'block';
+                            successAlert.style.display = 'none';
+                            var firstErrorField;
+                            data.errors.forEach(function(error, index) {
+                                var errorField = myForm.querySelector(
+                                    `[name="${error.field}"]`);
+                                if (errorField) {
+                                    errorField.style.border = '1px solid red';
+                                    if (errorField.type === 'file') {
+                                        errorField.classList.add('file-not-valid');
+                                    }
+                                    if (index === 0) {
+                                        firstErrorField = errorField;
+                                    }
+                                }
+                            });
+
+                            // Focus on the first invalid input field
+                            if (firstErrorField) {
+                                firstErrorField.focus();
+                            }
+                            setTimeout(function() {
+                                errorAlert.style.display = 'none';
+                            }, 3000);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+        myForm.addEventListener('input', function(event) {
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+                if (event.target.value.trim() !== '') {
+                    event.target.style.border = '';
+                    if (event.target.type === 'file') {
+                        event.target.classList.remove('file-not-valid');
+                    }
+                }
             }
         });
-        var formData = new FormData(myForm);
-        fetch(myForm.action, {
+        myForm.addEventListener('change', function(event) {
+            if (event.target.tagName === 'SELECT') {
+                if (event.target.value.trim() !== '') {
+                    event.target.style.border = '';
+                    if (event.target.type === 'file') {
+                        event.target.classList.remove('file-not-valid');
+                    }
+                }
+            }
+        });
+    });
+</script>
+<!-- to confirm order  -->
+<script>
+    document.querySelector('.confirmOrderButton').addEventListener('click', function() {
+        const form = document.querySelector('.confirmOrderForm');
+        const formData = new FormData(form);
+
+        fetch(form.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content')
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    errorAlert.style.display = 'none';
-                    successAlert.textContent = data.message;
-                    successAlert.style.display = 'block';
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                    setTimeout(function() {
-                        successAlert.style.display = 'none';
-                    }, 4000);
+                    alert('Order confirmed successfully!');
                     location.reload();
                 } else {
-                    errorList.innerHTML = '';
-                    if (data.errors.length > 0) {
-                        var li = document.createElement('li');
-                        li.textContent = data.errors[0].message;
-                        errorList.appendChild(li);
-                        errorAlert.style.display = 'block';
-                        successAlert.style.display = 'none';
-                        var firstErrorField;
-                        data.errors.forEach(function(error, index) {
-                            var errorField = myForm.querySelector(
-                                `[name="${error.field}"]`);
-                            if (errorField) {
-                                errorField.style.border = '1px solid red';
-                                if (errorField.type === 'file') {
-                                    errorField.classList.add('file-not-valid');
-                                }
-                                if (index === 0) {
-                                    firstErrorField = errorField;
-                                }
-                            }
-                        });
-
-                        // Focus on the first invalid input field
-                        if (firstErrorField) {
-                            firstErrorField.focus();
-                        }
-                        setTimeout(function() {
-                            errorAlert.style.display = 'none';
-                        }, 3000);
-                    }
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                alert('An error occurred while confirming the order.');
             });
     });
-    myForm.addEventListener('input', function(event) {
-        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-            if (event.target.value.trim() !== '') {
-                event.target.style.border = '';
-                if (event.target.type === 'file') {
-                    event.target.classList.remove('file-not-valid');
-                }
-            }
-        }
-    });
-    myForm.addEventListener('change', function(event) {
-        if (event.target.tagName === 'SELECT') {
-            if (event.target.value.trim() !== '') {
-                event.target.style.border = '';
-                if (event.target.type === 'file') {
-                    event.target.classList.remove('file-not-valid');
-                }
-            }
-        }
-    });
-});
-</script>
-<!-- to confirm order  -->
-<script>
-document.querySelector('.confirmOrderButton').addEventListener('click', function() {
-    const form = document.querySelector('.confirmOrderForm');
-    const formData = new FormData(form);
-
-    fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Order confirmed successfully!');
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while confirming the order.');
-        });
-});
 </script>
 @endpush

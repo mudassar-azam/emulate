@@ -14,22 +14,13 @@ use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Buyer\OrderController;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Controllers\StripeController;
-use App\Models\Buyer\Order;
 
-Route::get('/stripe-blade', function () {
-    $orders = Order::all();
-    return view('stripe',compact('orders')); 
-});
 
-Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
-Route::get('/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
-Route::get('/new-card/{token}', [StripeController::class, 'handlePayment'])->name('stripe.newcard');
-Route::post('/new-card', [StripeController::class, 'store']);
 
 // auth 
-Auth::routes();
-Route::post('register', [RegisterController::class, 'register'])->name('register');
-Route::post('/login', [LoginController::class, 'login'])->name('login');
+    Auth::routes();
+    Route::post('register', [RegisterController::class, 'register'])->name('register');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 // seller
 Route::group(['middleware' => CheckUserRole::class], function () {
@@ -43,18 +34,24 @@ Route::group(['middleware' => CheckUserRole::class], function () {
 
 
 // buyer
-Route::get('/', [BuyerFrontController::class, 'index'])->name('buyer.front');
-Route::get('/all-products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/product-details/{id}', [ProductController::class, 'details'])->name('product.details');
-Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkout');
-Route::post('/store-cart', [CartController::class, 'store'])->name('cart.store');
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::get('/cart/items', [CartController::class, 'getCartItems']);
-Route::post('/cart/confirm/order', [CartController::class, 'confirmOrder'])->name('buyer.cart.confirm.order');
-Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-Route::post('/order-now', [OrderController::class, 'buyNow'])->name('buyer.order.now');
-Route::delete('/destroyOrder/{id}', [OrderController::class, 'destroyOrder'])->name('order.destroy');
+    Route::get('/', [BuyerFrontController::class, 'index'])->name('buyer.front');
+    Route::get('/all-products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/product-details/{id}', [ProductController::class, 'details'])->name('product.details');
+    Route::post('/store-cart', [CartController::class, 'store'])->name('cart.store');
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/cart/items', [CartController::class, 'getCartItems']);
+    Route::post('/cart/confirm/order', [CartController::class, 'confirmOrder'])->name('buyer.cart.confirm.order');
+    Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/order-now', [OrderController::class, 'buyNow'])->name('buyer.order.now');
+    Route::delete('/destroyOrder/{id}', [OrderController::class, 'destroyOrder'])->name('order.destroy');
 
 
 // admin
-Route::post('admin/sendEmail', [\App\Http\Controllers\Admin\AdminController::class, 'sendEmail'])->name('admin.sendEmail');
+    Route::post('admin/sendEmail', [\App\Http\Controllers\Admin\AdminController::class, 'sendEmail'])->name('admin.sendEmail');
+
+// stripe 
+    Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
+    Route::get('/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+    Route::get('/new-card/{token}', [StripeController::class, 'handlePayment'])->name('stripe.newcard');
+    Route::post('/new-card', [StripeController::class, 'store']);
