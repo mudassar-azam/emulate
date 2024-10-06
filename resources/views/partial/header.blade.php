@@ -40,9 +40,9 @@
         </nav>
     </div>
     <div class="header-buttons">
-        <button class="cart-btn"><i class="fa-regular fa-heart"></i></button>
         @auth
-        <button class="cart-btn" id="cartButton"><i class="fa-solid fa-bag-shopping"></i></button>
+            <button class="cart-btn" onclick="openPopup('wishlist')"><i class="fa-regular fa-heart"></i></button>
+            <button class="cart-btn" id="cartButton"><i class="fa-solid fa-bag-shopping"></i></button>
         @endauth
 
         @if(Auth::check())
@@ -51,7 +51,7 @@
             <button type="submit" class="sign-in-btn rounded-btn">Logout</button>
         </form>
         @else
-        <button class="sign-in-btn rounded-btn" onclick="openPopup('signin')">Sign In</button>
+            <button class="sign-in-btn rounded-btn" onclick="openPopup('signin')">Sign In</button>
         @endif
     </div>
 </header>
@@ -61,11 +61,10 @@
     <div class="popup-content">
         <div class="popup-title">
             <h3>Sign In </h3>
-
             <div class="signin-link">
-                <span>Don't have an account? <button onclick="closePopup('signin'); openPopup('signup');">Sign
-                        Up</button></span>
+                <span>Don't have an account? <button onclick="closePopup('signin'); openPopup('signup');">Sign Up</button></span>
             </div>
+            <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('signin')">X</span></div>
         </div>
         <div class="popup-form-container">
             <form class="popup-form" method="POST" action="{{ route('login') }}">
@@ -114,6 +113,7 @@
     <div class="popup-content">
         <div class="popup-title">
             <h3>Seller Sign Up</h3>
+            <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('sellerSignup')">X</span></div>
         </div>
         <div class="popup-form-container">
             <form class="popup-form seller-register-form" method="POST" action="{{ route('register') }}">
@@ -180,7 +180,7 @@
 
             <div class="signin-link">
                 <span>Don't have an account? <button
-                        onclick="closePopup('signup'); openPopup('signin');">SignIn</button></span>
+                        onclick="closePopup('signup'); openPopup('signup');">SignIn</button></span>
             </div>
         </div>
         <div class="popup-form-container">
@@ -251,6 +251,20 @@
             <li><a href="#">About Us</a></li>
         </ul>
     </nav>
+</div>
+
+<!-- wishlist popup  -->
+<div id="wishlist-popup" class="popup">
+    <div class="popup-content">
+        <div class="popup-title">
+            <h3>Your Wishlist</h3>
+        </div>
+        <div class="popup-form-container">
+            <form class="popup-form">
+                
+            </form>
+        </div>
+    </div>
 </div>
 
 
@@ -487,4 +501,19 @@
                 console.error('Error:', error);
             });
     });
+</script>
+
+<script>
+    function openPopup(type) {
+        document.getElementById(`${type}-popup`).classList.add("open");
+        overlay.style.display = "block";
+    }
+
+
+    function closePopup(popupId) {
+        const popup = document.getElementById(popupId + '-popup');
+        if (popup) {
+            popup.style.display = 'none'; 
+        }
+    }
 </script>

@@ -12,6 +12,7 @@ use App\Http\Controllers\Buyer\ProductController;
 use App\Http\Controllers\Buyer\CheckoutController;
 use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Buyer\OrderController;
+use App\Http\Controllers\Buyer\WishlistController;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Controllers\StripeController;
 
@@ -55,3 +56,9 @@ Route::group(['middleware' => CheckUserRole::class], function () {
     Route::get('/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
     Route::get('/new-card/{token}', [StripeController::class, 'handlePayment'])->name('stripe.newcard');
     Route::post('/new-card', [StripeController::class, 'store']);
+
+// wishlist  
+    Route::post('/add-to-wishlist', [WishlistController::class, 'store'])->name('add.wishlist');
+    Route::get('/wishlist-items', [WishlistController::class, 'getWishlistItems'])->name('wishlist.all');
+    Route::post('/remove-wishlist-item', [WishlistController::class, 'removeWishlistItem'])->name('wishlist.remove');
+

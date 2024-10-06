@@ -20,6 +20,6 @@ class AdminController extends Controller
 
         Mail::to($email)->send(new InvitationEmail($signUpLink));
 
-        return back()->with('success', 'Invitation email sent successfully!');
+        return response()->json(['success' => true, 'message' => 'Mail sent successfully!']);
     }
 }
