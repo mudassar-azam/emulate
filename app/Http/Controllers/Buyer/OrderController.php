@@ -56,7 +56,8 @@ class OrderController extends Controller
         }
     }  
 
-    public function buyNow(Request $request){
+    public function buyNow(Request $request)
+    {
         $rules = [
             'size' => 'required',
             'zip' => 'required',
@@ -70,13 +71,17 @@ class OrderController extends Controller
                     'message' => $messages[0]
                 ];
             }
-        
             return response()->json(['success' => false, 'errors' => $errors], 422);
         }
-
+    
         $product = Item::find($request->input('product_id'));
-
-
+    
+        $existingOrder = Order::where('product_id', $request->input('product_id'))->first();
+    
+        if ($existingOrder) {
+            return response()->json(['success' => false], 400);
+        }
+    
         $data = $request->all();
         $data['user_id'] = Auth::user()->id;
         $data['product_id'] = $request->input('product_id');
@@ -84,15 +89,15 @@ class OrderController extends Controller
         $data['type'] = 'buy';
         $data['payment_status'] = 'due';
         $data['total_payment'] = $product->sale_price;
-
-        $product->available_to_buy = 0 ;
+    
+        $product->available_to_buy = 0;
         $product->save();
-
+    
         $order = Order::create($data);
-
+    
         return response()->json(['success' => true, 'message' => 'Order created successfully, Proceed to checkout!']);
-
     }
+    
 
     public function destroyOrder(Request $request , $id){
 

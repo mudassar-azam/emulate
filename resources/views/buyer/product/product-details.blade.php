@@ -253,7 +253,7 @@
 @endsection
 @push('scripts')
 
-<!-- for add to cart  -->
+<!-- for  cart  -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         fetchCartItems();
@@ -343,11 +343,15 @@
                     }, 2000);
                 }
 
+                if (data.status === 'exists') {
+                    toastr.error('Product already in cart.', 'Error', {
+                        positionClass: 'toast-top-right',
+                        timeOut: 3000
+                    });
+                }
+
                 fetchCartItems();
             })
-            .catch(error => {
-                console.error('Error adding to cart:', error);
-            });
     });
 
     function removeCartItem(cartId) {
@@ -376,6 +380,7 @@
             });
     }
 </script>
+<!-- for  cart end  -->
 <script src='https://sachinchoolur.github.io/lightslider/dist/js/lightslider.js'></script>
 <script>
     $('#lightSlider').lightSlider({
@@ -386,6 +391,8 @@
         thumbItem: 6
     });
 </script>
+
+<!-- to generate calendar -->
 <script>
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -522,8 +529,13 @@
 
         axios.post('/orders', data)
             .then(response => {
-                alert('Order created successfully , Proceed to checkout !');
-                location.reload();
+                toastr.success('Your order has confirmed ,Proceed to checkout', 'Success', {
+                    positionClass: 'toast-top-right',
+                    timeOut: 3000
+                });
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -562,73 +574,23 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        errorAlert.style.display = 'none';
-                        successAlert.textContent = data.message;
-                        successAlert.style.display = 'block';
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
+                        toastr.success('Thanks for placing your order. Proceed to checkout', 'Success', {
+                            positionClass: 'toast-top-right',
+                            timeOut: 3000
                         });
                         setTimeout(function() {
-                            successAlert.style.display = 'none';
-                        }, 4000);
-                        location.reload();
+                            location.reload();
+                        }, 2000);
                     } else {
-                        errorList.innerHTML = '';
-                        if (data.errors.length > 0) {
-                            var li = document.createElement('li');
-                            li.textContent = data.errors[0].message;
-                            errorList.appendChild(li);
-                            errorAlert.style.display = 'block';
-                            successAlert.style.display = 'none';
-                            var firstErrorField;
-                            data.errors.forEach(function(error, index) {
-                                var errorField = myForm.querySelector(
-                                    `[name="${error.field}"]`);
-                                if (errorField) {
-                                    errorField.style.border = '1px solid red';
-                                    if (errorField.type === 'file') {
-                                        errorField.classList.add('file-not-valid');
-                                    }
-                                    if (index === 0) {
-                                        firstErrorField = errorField;
-                                    }
-                                }
-                            });
-
-                            // Focus on the first invalid input field
-                            if (firstErrorField) {
-                                firstErrorField.focus();
-                            }
-                            setTimeout(function() {
-                                errorAlert.style.display = 'none';
-                            }, 3000);
-                        }
+                        toastr.error('Already Sold', 'Success', {
+                            positionClass: 'toast-top-right',
+                            timeOut: 3000
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        });
-        myForm.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
-        });
-        myForm.addEventListener('change', function(event) {
-            if (event.target.tagName === 'SELECT') {
-                if (event.target.value.trim() !== '') {
-                    event.target.style.border = '';
-                    if (event.target.type === 'file') {
-                        event.target.classList.remove('file-not-valid');
-                    }
-                }
-            }
         });
     });
 </script>
@@ -649,8 +611,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Order confirmed successfully!');
-                    location.reload();
+                    toastr.success('Your order has confirmed ,Proceed to checkout', 'Success', {
+                        positionClass: 'toast-top-right',
+                        timeOut: 3000
+                    });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
                 } else {
                     alert(data.message);
                 }
@@ -709,7 +676,11 @@
                         successAlert.style.display = 'none';
                     }, 2000);
                 } else {
-                    handleErrors(data.errors);
+
+                    toastr.error('Product already in wishlist.', 'Error', {
+                        positionClass: 'toast-top-right',
+                        timeOut: 3000
+                    });
                 }
             })
             .catch(error => console.error('Error adding wishlist item:', error));
