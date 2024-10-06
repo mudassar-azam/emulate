@@ -172,31 +172,16 @@
     max-height: 90vh;
     overflow-y: auto;
 }
-#mail-popup .container {
-    width: 100%;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    max-height: 90vh;
-    overflow-y: auto;
-}
 
 #addnewitem-popup .container .sub-container,
 #addnewpost-popup .container .sub-container,
 #setting-popup .container .sub-container {
     padding: 10px 30px;
 }
-#mail-popup .container .sub-container {
-    padding: 10px 30px;
-}
 
 #addnewitem-popup .container::-webkit-scrollbar,
 #addnewpost-popup .container::-webkit-scrollbar,
 #setting-popup .container::-webkit-scrollbar {
-    display: none;
-}
-#mail-popup .container::-webkit-scrollbar {
     display: none;
 }
 
@@ -214,12 +199,6 @@
     color: #000;
     cursor: pointer;
 }
-#mail-popup .container a {
-    font-size: 0.8rem;
-    text-decoration: none;
-    color: #000;
-    cursor: pointer;
-}
 
 #addnewitem-popup label,
 #addnewpost-popup label,
@@ -229,23 +208,16 @@
     font-size: 1rem;
     color: gray;
 }
-#mail-popup label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 1rem;
-    color: gray;
-}
+
 #addnewitem-popup input[type="text"],
 #addnewpost-popup input[type="text"],
 #setting-popup input[type="text"],
-#mail-popup input[type="text"],
 #addnewitem-popup input[type="file"],
 #addnewpost-popup input[type="file"],
 #setting-popup input[type="file"],
 #addnewitem-popup input[type="number"],
 #addnewpost-popup input[type="number"],
 #setting-popup input[type="number"],
-#mail-popup input[type="email"],
 #addnewitem-popup select,
 #addnewpost-popup select,
 #setting-popup select,
@@ -273,7 +245,7 @@
     margin-bottom: 1rem;
 }
 
-
+  
 .file-upload-container {
     width: 100%;
     padding: 20px;
@@ -369,13 +341,13 @@
     gap: 20px;
     align-items: flex-end;
   }
-
+  
   .search-section input {
     width: 100%;
   }
-
+  
   .search-section p {
     margin: 10px 0;
   }
-
+  
 }

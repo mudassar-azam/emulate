@@ -81,9 +81,11 @@ function toggleDropdownUnique() {
 }
 
 window.onclick = function (event) {
+  // Check if the clicked target is not the profile image
   if (!event.target.matches(".profile-image-unique")) {
     const dropdown = document.getElementById("dropdown-unique");
-    if (dropdown.style.display === "block") {
+    // Only proceed if the dropdown element exists
+    if (dropdown && dropdown.style.display === "block") {
       dropdown.style.display = "none";
     }
   }
@@ -98,55 +100,3 @@ function scrollSlider(direction) {
 function toggleFaq(faq) {
   faq.classList.toggle("open");
 }
-
-// Toggle the collapse/expand feature
-const filterCategories = document.querySelectorAll(".filter-category h4");
-
-filterCategories.forEach((header) => {
-  header.addEventListener("click", () => {
-    const category = header.parentElement;
-    category.classList.toggle("active");
-  });
-});
-
-// Open filtersidebar and show overlay when cart button is clicked
-openFilterbar.addEventListener("click", () => {
-  filterSidebar.style.right = "0";
-  overlay.style.display = "block";
-});
-closeFilterbar.addEventListener("click", () => {
-  filterSidebar.style.right = "-100%";
-  overlay.style.display = "none";
-});
-
-//search
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.querySelector('.search-bar');
-  const selectedFiltersContainer = document.querySelector('.selected-filters');
-
-  // Event listener for pressing "Enter" in the search input
-  searchInput.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter' && searchInput.value.trim() !== '') {
-          addFilter(searchInput.value.trim());
-          searchInput.value = ''; // Clear the search input after adding the filter
-      }
-  });
-
-  // Function to add a filter tag
-  function addFilter(keyword) {
-      const filterTag = document.createElement('button');
-      filterTag.classList.add('filter-tag');
-      filterTag.innerHTML = `${keyword} <span class="remove-filter">x</span>`;
-
-      // Append the filter tag to the container
-      selectedFiltersContainer.appendChild(filterTag);
-
-      // Add event listener for removing the filter
-      filterTag.querySelector('.remove-filter').addEventListener('click', function () {
-          filterTag.remove(); // Remove the filter tag
-      });
-  }
-});
-
-
-      

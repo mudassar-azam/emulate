@@ -352,7 +352,7 @@
 
   .header-buttons {
     display: flex;
-    gap: 5px;
+    gap: 12px;
   }
   header .container {
     flex-direction: column;

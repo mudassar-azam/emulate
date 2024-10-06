@@ -179,7 +179,7 @@ a{
 
 .image-box-banner {
   background-color: var(--color-gray-light);
-  height: 45vh; /* Height for the banner */
+  min-height: 45vh; /* Height for the banner */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -225,14 +225,15 @@ a{
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
   background-color: #f4f4f4;
+  margin: 1rem 0;
 }
 
 .reserve-banner-section .banner-container {
   width: 100%;
   max-width: 1200px;
-  height: 500px;
+  min-height: 500px;
   background-image: url('https://via.placeholder.com/1200x400');
   background-size: cover;
   background-position: center;
@@ -450,9 +451,14 @@ a{
   .image-box {
     width: 20%; /* Adjust size for smaller screens */
   }
-  .reserve-banner-section .banner-container {
-    height: 400px;
+  .reserve-banner-section {
+    /* height: 80vh; */
   }
+  
+.banner-container .reserve-content {
+  width:70%;
+}
+
   .product-item {
     flex: 0 0 150px;
   }
@@ -485,9 +491,17 @@ a{
   .image-box p {
     font-size: 14px; /* Adjust text size for mobile */
   }
-  .reserve-banner-section .banner-container {
-    height: 300px;
+  .reserve-banner-section {
+    /* height: 60vh; */
+
   }
+
+  
+.banner-container .reserve-content {
+  padding: 10px;
+  width:90%;
+}
+
 
   .reserve-banner-section .reserve-content h1 {
     font-size: 1.2rem;
