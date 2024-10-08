@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Seller\Item;
+use App\Models\Buyer\Order;
 
 class BuyerFrontController extends Controller
 {

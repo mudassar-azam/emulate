@@ -13,6 +13,7 @@ use App\Http\Controllers\Buyer\CheckoutController;
 use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Buyer\OrderController;
 use App\Http\Controllers\Buyer\WishlistController;
+use App\Http\Controllers\Buyer\BuyerSettingsController;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Controllers\StripeController;
 
@@ -46,6 +47,12 @@ Route::group(['middleware' => CheckUserRole::class], function () {
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::post('/order-now', [OrderController::class, 'buyNow'])->name('buyer.order.now');
     Route::delete('/destroyOrder/{id}', [OrderController::class, 'destroyOrder'])->name('order.destroy');
+
+//buyer/settings
+
+    Route::get('/buyer-settings', [BuyerSettingsController::class, 'settings'])->name('buyer.settings');
+    Route::post('/buyer-update-settings', [BuyerSettingsController::class, 'update'])->name('buyer.update.settings');
+    Route::post('/deleteOrder/{id}', [BuyerSettingsController::class, 'destroy'])->name('buyer.order.destroy');
 
 
 // admin

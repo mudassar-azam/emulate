@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('buyer_settings', function (Blueprint $table) {
             $table->id();
+            $table->string('image')->nullable();
             $table->string('firstname')->nullable();
             $table->string('lastname')->nullable();
             $table->date('dob')->nullable(); 

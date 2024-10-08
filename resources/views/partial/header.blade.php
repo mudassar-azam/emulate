@@ -43,6 +43,9 @@
         @auth
             <button class="cart-btn" onclick="openPopup('wishlist')"><i class="fa-regular fa-heart"></i></button>
             <button class="cart-btn" id="cartButton"><i class="fa-solid fa-bag-shopping"></i></button>
+            @if(auth()->user()->role == 'buyer')
+                <button class="settings-btn" id="settingsButton" onclick="window.location.href='{{ route('buyer.settings') }}'"><i class="fa-solid fa-cog"></i></button>
+            @endif    
         @endauth
 
         @if(Auth::check())
@@ -121,7 +124,7 @@
                 <input type="hidden" name="role" value="seller">
                 <label for="email">{{ __('Email Address') }}</label>
                 <input type="email" id="email" class="@error('email') is-invalid @enderror" name="email"
-                    value="{{ $email ?? old('email') }}" required autocomplete="email">
+                    value="{{ $email ?? old('email') }}"  autocomplete="email">
                 @error('email')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -130,7 +133,7 @@
 
                 <label for="password">{{ __('Password') }}</label>
                 <input type="password" id="password" class="@error('password') is-invalid @enderror" name="password"
-                    required autocomplete="current-password">
+                     autocomplete="current-password">
                 @error('password')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -140,7 +143,7 @@
 
                 <label for="name">Username</label>
                 <input type="text" id="name" class="@error('name') is-invalid @enderror" name="name"
-                    value="{{ old('name') }}" required autocomplete="name" autofocus>
+                    value="{{ old('name') }}"  autocomplete="name" autofocus>
                 @error('name')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -258,6 +261,7 @@
     <div class="popup-content">
         <div class="popup-title">
             <h3>Your Wishlist</h3>
+            <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('wishlist')">X</span></div>
         </div>
         <div class="popup-form-container">
             <form class="popup-form">
@@ -266,7 +270,6 @@
         </div>
     </div>
 </div>
-
 
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -381,6 +384,8 @@
 
     document.addEventListener('DOMContentLoaded', checkURLParams);
 </script>
+
+<!-- for buyer signup  -->
 <script>
     document.querySelector('.register-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -423,6 +428,9 @@
             });
     });
 </script>
+<!-- for buyer signup end  -->
+
+<!-- script for sign in  -->
 <script>
     document.querySelector('.popup-form').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -430,7 +438,10 @@
         const password = document.getElementById('password').value;
 
         if (!email || !password) {
-            alert('All fields are required');
+            toastr.error('All fields are required.', 'Error', {
+                positionClass: 'toast-top-right',
+                timeOut: 3000
+            });
             return;
         }
 
@@ -450,7 +461,10 @@
             if (data.redirect) {
                 window.location.href = data.redirect;
             } else {
-                alert(data.message || 'Login failed');
+                toastr.error('Invalid credentials.', 'Error', {
+                    positionClass: 'toast-top-right',
+                    timeOut: 3000
+                });
             }
         })
         .catch(error => {
@@ -458,6 +472,8 @@
         });
     });
 </script>
+<!-- script for sign in end -->
+
 <script>
     document.querySelector('.seller-register-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -485,16 +501,12 @@
             .then(data => {
                 if (data.success) {
                     window.location.href = data.redirect;
-                } else if (data.errors) { 
-                    if (data.errors.email) {
-                        emailError.textContent = data.errors.email[0];
-                    }
-                    if (data.errors.name) {
-                        nameError.textContent = data.errors.name[0];
-                    }
-                    if (data.errors.password) {
-                        passwordError.textContent = data.errors.password[0];
-                    }
+                }else if (data.errors) { 
+
+                    Object.keys(data.errors).forEach(function (key) {
+                        toastr.error(data.errors[key][0]);
+                    });
+
                 }
             })
             .catch(error => {

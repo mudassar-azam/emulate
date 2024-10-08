@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{asset('assets/css/singleProduct.css')}}" />
     <link rel="stylesheet" href="{{asset('assets/css/checkout.css')}}" />
     <link rel="stylesheet" href="{{asset('assets/css/profile.css')}}" />
+    <link rel="stylesheet" href="./assets/css/myprofile.css" />
 
     <link rel="stylesheet" href="{{asset('assets/css/orderDetail.css')}}" />
 
@@ -80,6 +81,160 @@
     <div class="overlay" id="overlay"></div>
 
     <script src="{{asset('assets/js/script.js')}}"></script>
+
+
+
+    <!-- for wishlist  -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myForm = document.getElementById('addToWishlist');
+            var errorAlert = document.getElementById('alert-danger');
+            var errorList = document.getElementById('error-list');
+            var successAlert = document.getElementById('alert-success');
+            var wishlistPopupContainer = document.querySelector('#wishlist-popup .popup-form');
+
+            // Fetch and display wishlist items when the page loads
+            fetch('/wishlist-items', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.items.forEach(item => appendWishlistItem(item));
+                    }
+                })
+                .catch(error => console.error('Error fetching wishlist items:', error));
+
+            // Handle form submission (adding item)
+            myForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(myForm);
+
+                fetch(myForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            successAlert.textContent = data.message;
+                            successAlert.style.display = 'block';
+                            appendWishlistItem(data.item);
+
+                            setTimeout(function() {
+                                successAlert.style.display = 'none';
+                            }, 2000);
+                        } else {
+
+                            toastr.error('Product already in wishlist.', 'Error', {
+                                positionClass: 'toast-top-right',
+                                timeOut: 3000
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error adding wishlist item:', error));
+            });
+
+            // Append new wishlist item
+            function appendWishlistItem(item) {
+                var newItem = document.createElement('div');
+                newItem.style.display = 'flex';
+                newItem.style.alignItems = 'center';
+                newItem.style.justifyContent = 'center';
+                newItem.style.gap = '15rem';
+                newItem.style.margin = '2em 3em';
+
+                var itemContent = `
+                    <div style="display:flex;align-items: center;justify-content: center;height: 13%; gap:10px;" >
+                        <div>
+                            <img style="height: 60px;width: 100px;" src="/item-images/${item.image}">
+                        </div>
+                        <div>
+                            <span>${item.name}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="remove-btn" data-item-id="${item.id}">Remove</button>
+                    </div>
+                `;
+                newItem.innerHTML = itemContent;
+
+                // Add the new item to the wishlist popup container
+                wishlistPopupContainer.appendChild(newItem);
+
+                // Attach remove functionality to the newly created remove button
+                var removeButton = newItem.querySelector('.remove-btn');
+                removeButton.addEventListener('click', function() {
+                    removeWishlistItem(item.id, newItem);
+                });
+            }
+
+            // Handle item removal
+            function removeWishlistItem(itemId, itemElement) {
+                fetch('/remove-wishlist-item', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            id: itemId
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the item from the DOM
+                            itemElement.remove();
+                        } else {
+                            alert('Error removing item');
+                        }
+                    })
+                    .catch(error => console.error('Error removing wishlist item:', error));
+            }
+
+            // Handle form validation errors
+            function handleErrors(errors) {
+                errorList.innerHTML = '';
+                if (errors.length > 0) {
+                    var li = document.createElement('li');
+                    li.textContent = errors[0].message;
+                    errorList.appendChild(li);
+                    errorAlert.style.display = 'block';
+                    successAlert.style.display = 'none';
+
+                    var firstErrorField;
+                    errors.forEach(function(error, index) {
+                        var errorField = myForm.querySelector(`[name="${error.field}"]`);
+                        if (errorField) {
+                            errorField.style.border = '1px solid red';
+                            if (index === 0) {
+                                firstErrorField = errorField;
+                            }
+                        }
+                    });
+
+                    if (firstErrorField) {
+                        firstErrorField.focus();
+                    }
+
+                    setTimeout(function() {
+                        errorAlert.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+
 </body>
 
 </html>

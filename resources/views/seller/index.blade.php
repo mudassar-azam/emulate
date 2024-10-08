@@ -204,8 +204,8 @@
 <div id="mail-popup" class="popup">
     <div class="container">
         <div class="d-flex justify-between"
-            style="margin-bottom:40px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
-            <h2>Send signup link</h2>
+            style="margin-bottom:10px;border-bottom:1px solid lightgray;padding:0.8rem 1rem;">
+            <h2>Send Mail</h2>
             <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('mail')">X</span></div>
         </div>
         <div class="sub-container">
@@ -454,11 +454,8 @@
         var errorAlert = document.getElementById('alert-danger');
         var errorList = document.getElementById('error-list');
         var successAlert = document.getElementById('alert-success');
-        document.getElementById('images').addEventListener('change', function() {
-            const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-            console.log('Selected files: ', fileNames); // Debugging output
-            // You can display these names in a paragraph or div if you want to show them on the UI.
-        });
+
+        
         myForm.addEventListener('submit', function(event) {
             event.preventDefault();
             var formElements = myForm.querySelectorAll('input, select, textarea');
@@ -558,11 +555,8 @@
         var errorAlert = document.getElementById('alert-danger');
         var errorList = document.getElementById('error-list');
         var successAlert = document.getElementById('alert-success');
-        document.getElementById('images').addEventListener('change', function() {
-            const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-            console.log('Selected files: ', fileNames); // Debugging output
-            // You can display these names in a paragraph or div if you want to show them on the UI.
-        });
+
+
         myForm.addEventListener('submit', function(event) {
             event.preventDefault();
             var formElements = myForm.querySelectorAll('input, select, textarea');

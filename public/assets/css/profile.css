@@ -163,7 +163,8 @@
 }
 #addnewitem-popup .container,
 #addnewpost-popup .container,
-#setting-popup .container {
+#setting-popup .container ,
+#mail-popup .container{
     width: 100%;
     background-color: #fff;
     border-radius: 10px;
@@ -175,7 +176,8 @@
 
 #addnewitem-popup .container .sub-container,
 #addnewpost-popup .container .sub-container,
-#setting-popup .container .sub-container {
+#setting-popup .container .sub-container,
+#mail-popup .container .sub-container{
     padding: 10px 30px;
 }
 
@@ -187,7 +189,8 @@
 
 #addnewitem-popup .container h2,
 #addnewpost-popup .container h2,
-#setting-popup .container h2 {
+#setting-popup .container h2,
+#mail-popup .container h2 {
     font-size: 1rem;
 }
 
@@ -210,6 +213,7 @@
 }
 
 #addnewitem-popup input[type="text"],
+#mail-popup input[type="email"],
 #addnewpost-popup input[type="text"],
 #setting-popup input[type="text"],
 #addnewitem-popup input[type="file"],

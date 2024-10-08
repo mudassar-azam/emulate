@@ -181,7 +181,7 @@
 
 .container.id-001.account-details.id-002 .profile-section.id-004 {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;

@@ -4,12 +4,18 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 :root {
-  --color-primary-dark: #777a80; /* Define your dark primary color */
-  --color-primary-light: #919191; /* Define your light primary color */
-  --color-gray-light: #d9d9d9; /* Light gray background */
-  --color-black: #000000; /* Black */
-  --color-white: #ffffff; /* White */
+  --color-primary-dark: #777a80;
+  /* Define your dark primary color */
+  --color-primary-light: #919191;
+  /* Define your light primary color */
+  --color-gray-light: #d9d9d9;
+  /* Light gray background */
+  --color-black: #000000;
+  /* Black */
+  --color-white: #ffffff;
+  /* White */
 }
 
 /* Body Styles */
@@ -17,6 +23,20 @@ body {
   font-family: "Arial", sans-serif;
   background-color: #f5f5f5;
 }
+
+.settings-btn {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.settings-btn i {
+  color: white;
+}
+
 
 .alert {
   position: absolute !important;
@@ -49,7 +69,7 @@ body {
   color: white !important;
 }
 
-a{
+a {
   text-decoration: none;
   color: #000000;
 }
@@ -57,15 +77,18 @@ a{
 .d-flex {
   display: flex;
 }
+
 .justify-center {
   justify-content: center;
 }
+
 .justify-between {
   justify-content: space-between;
 }
+
 .align-center {
   align-items: center;
-} 
+}
 
 .main {
   margin-top: 75px;
@@ -113,7 +136,8 @@ a{
 
 .image-section .image-card {
   position: relative;
-  width: 23%; /* Set width for 4 images in a row */
+  width: 23%;
+  /* Set width for 4 images in a row */
   overflow: hidden;
   /* border-radius: 10px; */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -122,14 +146,18 @@ a{
 .image-section .image-card img {
   width: 100%;
   height: auto;
-  object-fit: cover; /* Ensures the image covers the div with the proper aspect ratio */
+  object-fit: cover;
+  /* Ensures the image covers the div with the proper aspect ratio */
   transition: transform 0.4s ease-in-out;
-  aspect-ratio: 3/5; /* Enforces 4:3 aspect ratio */
-  max-height: 600px; /* Adjust this to increase the image height */
+  aspect-ratio: 3/5;
+  /* Enforces 4:3 aspect ratio */
+  max-height: 600px;
+  /* Adjust this to increase the image height */
 }
 
 .image-section .image-card:hover img {
-  transform: scale(1.1); /* Zoom effect on hover */
+  transform: scale(1.1);
+  /* Zoom effect on hover */
 }
 
 .image-section .overlay2 {
@@ -137,7 +165,8 @@ a{
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(256, 256, 256, 0.6); /* Black transparent overlay */
+  background-color: rgba(256, 256, 256, 0.6);
+  /* Black transparent overlay */
   height: 0;
   overflow: hidden;
   transition: height 0.4s ease-in-out;
@@ -148,7 +177,8 @@ a{
 }
 
 .image-section .image-card:hover .overlay2 {
-  height: 60%; /* The overlay pops up to 50% of the image */
+  height: 60%;
+  /* The overlay pops up to 50% of the image */
 }
 
 .image-section .overlay-content {
@@ -164,7 +194,8 @@ a{
 }
 
 .image-section .image-card:hover .overlay-content {
-  opacity: 1; /* Text fades in */
+  opacity: 1;
+  /* Text fades in */
 }
 
 .image-section h2 {
@@ -175,11 +206,13 @@ a{
 .image-section p {
   font-size: 0.8rem;
 }
+
 /* .image-section styles end */
 
 .image-box-banner {
   background-color: var(--color-gray-light);
-  min-height: 45vh; /* Height for the banner */
+  min-height: 45vh;
+  /* Height for the banner */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -195,7 +228,8 @@ a{
 
 .image-box {
   text-align: center;
-  width: 20%; /* Each image box takes 15% of the container width */
+  width: 20%;
+  /* Each image box takes 15% of the container width */
   margin: 0 10px;
 }
 
@@ -203,14 +237,16 @@ a{
   width: 150px;
   height: 150px;
   object-fit: cover;
-  border-radius: 50%; /* Circular image */
+  border-radius: 50%;
+  /* Circular image */
   border: 4px solid --color-white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
 }
 
 .image-box:hover img {
-  transform: scale(1.1); /* Slight zoom on hover */
+  transform: scale(1.1);
+  /* Slight zoom on hover */
 }
 
 .image-box p {
@@ -247,7 +283,7 @@ a{
   text-align: center;
   color: black;
   padding: 20px;
-  width:60%;
+  width: 60%;
   border-radius: 10px;
 }
 
@@ -327,7 +363,7 @@ a{
 
 .product-slider .product-price {
   font-size: 0.8rem;
-  color:var(--color-primary-light);
+  color: var(--color-primary-light);
 }
 
 .slider-controls {
@@ -445,19 +481,24 @@ a{
   .popup-content {
     width: 90%;
   }
+
   .image-section .image-card {
-    width: 48%; /* Two images per row on smaller screens */
+    width: 48%;
+    /* Two images per row on smaller screens */
   }
+
   .image-box {
-    width: 20%; /* Adjust size for smaller screens */
+    width: 20%;
+    /* Adjust size for smaller screens */
   }
+
   .reserve-banner-section {
     /* height: 80vh; */
   }
-  
-.banner-container .reserve-content {
-  width:70%;
-}
+
+  .banner-container .reserve-content {
+    width: 70%;
+  }
 
   .product-item {
     flex: 0 0 150px;
@@ -474,33 +515,40 @@ a{
 
 @media screen and (max-width: 480px) {
   .image-section .image-card {
-    width: 100%; /* One image per row on very small screens */
+    width: 100%;
+    /* One image per row on very small screens */
   }
+
   .image-box-container {
     flex-wrap: wrap;
   }
+
   .image-box {
-    width: 30%; /* Stack more tightly on small screens */
+    width: 30%;
+    /* Stack more tightly on small screens */
   }
 
   .image-box img {
     width: 80px;
-    height: 80px; /* Smaller images on mobile */
+    height: 80px;
+    /* Smaller images on mobile */
   }
 
   .image-box p {
-    font-size: 14px; /* Adjust text size for mobile */
+    font-size: 14px;
+    /* Adjust text size for mobile */
   }
+
   .reserve-banner-section {
     /* height: 60vh; */
 
   }
 
-  
-.banner-container .reserve-content {
-  padding: 10px;
-  width:90%;
-}
+
+  .banner-container .reserve-content {
+    padding: 10px;
+    width: 90%;
+  }
 
 
   .reserve-banner-section .reserve-content h1 {
@@ -515,6 +563,7 @@ a{
     font-size: 12px;
     padding: 6px 12px;
   }
+
   .product-slider .product-item {
     flex: 0 0 49%;
   }
@@ -527,4 +576,3 @@ a{
     font-size: 20px;
   }
 }
-
