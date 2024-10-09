@@ -10,13 +10,20 @@ class ItemImagesSeeder extends Seeder
 {
     public function run()
     {
-        $imageNames = '1727587656_66f8e5481adc9_makeup.jfif';
+        $imageNames = [
+            '1728438048_6705df209a184_1.jfif',
+            '1728438048_6705df209a184_2.jfif',
+            '1728438048_6705df209a184_3.jfif',
+            '1728438048_6705df209a184_4.jfif',
+            '1728438048_6705df209a184_5.jfif',
+        ];
+        
         $itemIds = [1, 2, 3, 4, 5];
-
-        foreach ($itemIds as $itemId) {
+        
+        foreach ($itemIds as $key => $itemId) {
             ItemImage::create([
                 'item_id' => $itemId,
-                'image_name' => $imageNames,
+                'image_name' => $imageNames[$key], 
             ]);
         }
     }

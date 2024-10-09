@@ -90,7 +90,7 @@
                             @endphp
 
                             @if($firstImage)
-                            <img style="height: 86%;width: 100%;"
+                            <img style="height: 80%;width: 60%;"
                                 src="{{ asset('item-images/' . $firstImage->image_name) }}" class="product-image">
                             @else
                             <img src="{{asset('default.jfif')}}" class="product-image">
@@ -125,7 +125,7 @@
                         @endphp
                         <div class="product-item">
                             @if($firstImage)
-                            <img style="height: 86%;width: 100%;"
+                            <img style="height: 80%;width: 60%;"
                                 src="{{ asset('post-images/' . $firstImage->image_name) }}" class="product-image">
                             @else
                             <img src="{{asset('default.jfif')}}" class="product-image">

@@ -181,9 +181,9 @@
         <div class="popup-title">
             <h3>Sign Up</h3>
 
-            <div class="signin-link">
-                <span>Don't have an account? <button
-                        onclick="closePopup('signup'); openPopup('signup');">SignIn</button></span>
+            <div class="signin-link" style="display: flex;gap: 1.5em;">
+                <span>Don't have an account? <button onclick="closePopup('signup'); openPopup('signin');">SignIn</button></span>
+                <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('signup')">X</span></div>
             </div>
         </div>
         <div class="popup-form-container">
