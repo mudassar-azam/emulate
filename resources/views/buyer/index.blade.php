@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+<div id="alert-success" class="alert alert-success" style="display: none;"></div>
 <main class="main">
     <!-- Banner Section -->
     <section class="banner">

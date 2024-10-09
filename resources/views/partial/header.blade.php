@@ -59,6 +59,8 @@
     </div>
 </header>
 
+
+
 <!-- Sign In Popup -->
 <div id="signin-popup" class="popup">
     <div class="popup-content">
@@ -258,7 +260,7 @@
 
 <!-- wishlist popup  -->
 <div id="wishlist-popup" class="popup">
-    <div class="popup-content">
+    <div class="popup-content" style="width:85% !important;">
         <div class="popup-title">
             <h3>Your Wishlist</h3>
             <div><span style="font-weight: bold; cursor:pointer;" onclick="closePopup('wishlist')">X</span></div>
@@ -529,3 +531,5 @@
         }
     }
 </script>
+
+ 

@@ -1,8 +1,13 @@
 @extends('layouts.app')
 @section('content')
 <main class="main">
+    <style>
+    .back-btn {
+        cursor: pointer;
+    }
+    </style>
     <div class="d-flex" style="padding-top:1rem;">
-        <div class="back-btn">
+        <div class="back-btn" onclick="goBack()">
             <i class="fa-solid fa-arrow-left"></i>
         </div>
         <h1 style="flex:1;text-align:center;">Order</h1>
@@ -14,8 +19,8 @@
             <div class="order-item">
                 <div class="order-details">
                     @php
-                        $firstImage = $order->product->itemImages->first();
-                        $total = $total + $order->total_payment;
+                    $firstImage = $order->product->itemImages->first();
+                    $total = $total + $order->total_payment;
                     @endphp
 
                     @if($firstImage)
@@ -44,5 +49,9 @@
 </main>
 @endsection
 @push('scripts')
-
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
 @endpush

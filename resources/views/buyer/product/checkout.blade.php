@@ -82,8 +82,13 @@
             @endif
         </div>
     </header>
+    <style>
+        .back-btn {
+            cursor: pointer;
+        }
+    </style>
     <main class="main" style="margin-top: 7em;">
-        <div class="back-btn">
+        <div class="back-btn" onclick="goBack()">
             <i class="fa-solid fa-arrow-left"></i>
         </div>
 
@@ -211,6 +216,12 @@
 
     </main>
 </body>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
